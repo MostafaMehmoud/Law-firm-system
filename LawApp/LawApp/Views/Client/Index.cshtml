@@ -1,0 +1,571 @@
+﻿
+@using Law.CORE.ViewModels
+@model UpdateClient
+<style>
+	.custom-input {
+		font-size: 0.85rem;
+		padding: 0.25rem 0.5rem;
+	}
+
+	.custom-button {
+		margin: 0.2rem;
+		padding: 0.3rem 0.6rem;
+		font-size: 0.85rem;
+	}
+
+	.custom-form-group {
+		margin-bottom: 0.4rem;
+	}
+
+	.card-header {
+		padding: 0.5rem 1rem;
+	}
+
+	.form-label {
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+
+	.form-control-sm {
+		font-size: 0.85rem;
+		padding: 0.25rem 0.5rem;
+	}
+</style>
+<div class="col-12 grid-margin stretch-card">
+	<div class="card">
+		<div class="d-flex m-3 justify-content-between">
+			<div>
+				<h1 class="card-title text-dark font-weight-bold fs-2">الموكلين</h1>
+			</div>
+			<div class="d-flex justify-content-end navigation-buttons">
+				<div class="btn btn-primary btn-sm custom-button" id="btnMin">
+					<i class="fa fa-angle-double-right"></i>
+				</div>
+				<div class="btn btn-primary btn-sm custom-button" id="btnPrevious">
+					<i class="fa fa-angle-right"></i>
+				</div>
+				<div class="btn btn-primary btn-sm custom-button" id="btnNext">
+					<i class="fa fa-angle-left">
+
+					</i>
+				</div>
+				<div class="btn btn-primary btn-sm custom-button" id="btnMax">
+					<i class="fa fa-angle-double-left"></i>
+				</div>
+			</div>
+		</div>
+		<div class="card-body">
+			<form id="ClientForm" enctype="multipart/form-data">
+				<input type="hidden" id="ClientId" asp-for="Id" />
+				<input type="hidden" id="OldImageBase64" asp-for="OldImageBase64" />
+				<div class="row row-cols-3 g-2" style="height: 100px;">
+					<div class="col-2">
+						<label class="form-label">رقم الموكل</label>
+						<input id="ClientCodeInput" asp-for="Code" type="number" class="form-control form-control-sm" placeholder="ادخل رقم الموكل" readonly />
+					</div>
+					<div class="col-5">
+						<label class="form-label"> اسم الموكل</label>
+						<input id="ClientNameInput" asp-for="ClientName" type="text" class="form-control form-control-sm" placeholder="ادخل مسمي القضية" />
+					</div>
+					<div class="col-5">
+						<label class="form-label">صورة الموكل (JPG فقط)</label>
+						<div class="d-flex align-items-start gap-3">
+							<div class="flex-grow-1">
+								<input id="ClientImageInput" asp-for="ClientImage" type="file" accept=".jpg,.jpeg" class="form-control form-control-sm" />
+							</div>
+							<div>
+								<img id="previewImage" src="#" alt="معاينة الصورة"
+									 style="display:none; width: 100px; height: 100px; object-fit: cover; border: 2px solid #ccc; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);" />
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+				<div class="row  g-2">
+					<div class="col-3 ">
+						<label class="form-label"> هاتف عمل </label>
+						<input id="workPhoneNumber" asp-for="WorkPhoneNumber" type="text" class="form-control form-control-sm" placeholder="ادخل  هاتف عمل" />
+
+					</div>
+					<div class="col-3 ">
+						<label class="form-label">  رقم فاكس </label>
+						<input id="faxNumber" asp-for="FaxNumber" type="text" class="form-control form-control-sm" placeholder="ادخل رقم فاكس" />
+
+					</div>
+					<div class="col-3">
+						<label class="form-label">  رقم جوال </label>
+						<input id="mobileNumber" asp-for="MobileNumber" type="text" class="form-control form-control-sm" placeholder="ادخل رقم جوال" />
+
+					</div>
+					<div class="col-3 ">
+						<label class="form-label"> تاريخ القضية </label>
+						<input id="IssureDate" asp-for="IssueDate" type="date" class="form-control form-control-sm"  />
+
+					</div>
+				</div>
+				<div class="row  g-2">
+						<div class="col-12">
+						<label class="form-label">  العنوان  </label>
+						<input id="address" asp-for="Address" type="text" class="form-control form-control-sm" placeholder="ادخل العنوان" />
+
+					</div>
+				</div>
+				<div class="row  g-2">
+						<div class="col-6">
+						<label class="form-label">  الشخص المسئول  </label>
+						<input id="responsiblePerson" asp-for="ResponsiblePerson" type="text" class="form-control form-control-sm" placeholder="ادخل الشخص المسئول" />
+
+					</div>
+					<div class="col-3">
+						<label class="form-label">  رقم البطاقة   </label>
+						<input id="nationalNumber" asp-for="NationalNumber" type="text" class="form-control form-control-sm" placeholder="ادخل رقم البطاقة" />
+
+					</div>
+					<div class="col-3">
+						<label class="form-label">المصدر </label>
+						<input id="source" type="text" asp-for="Source" class="form-control form-control-sm" placeholder="ادخل المصدر" />
+
+					</div>
+				</div>
+				<div class="row  g-2">
+						<div class="col-6">
+						<label class="form-label">  الايميل   </label>
+						<input id="email" type="text" asp-for="Email" class="form-control form-control-sm" placeholder="ادخل الايميل" />
+
+					</div>
+					<div class="col-3">
+						<label class="form-label">التاريخ </label>
+						<input id="date" type="date" asp-for="DateNow" class="form-control form-control-sm" placeholder="ادخل التاريخ" />
+
+					</div>
+					<div class="col-3">
+						<label class="form-label">الرصيد السابق </label>
+						<input id="lastBalance" asp-for="LastBalance" type="number" class="form-control form-control-sm" placeholder="ادخل الرصيد السابق" />
+
+					</div>
+				</div>
+				<div class="form-group custom-form-group mt-3">
+					<button type="button" class="btn btn-success btn-sm custom-button" id="btnAdd">حفظ</button>
+					<button type="button" class="btn btn-secondary btn-sm custom-button" id="btnEdit">تعديل</button>
+					<button type="button" class="btn btn-danger btn-sm custom-button" id="btnDelete">حذف</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	</div>
+	@section Scripts {
+		<!-- jQuery -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<!-- SweetAlert2 for alerts -->
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script>
+						$('#ClientImageInput').change(function () {
+				const file = this.files[0];
+
+				if (file && file.type === 'image/jpeg') {
+					const reader = new FileReader();
+					reader.onload = function (e) {
+						$('#previewImage').attr('src', e.target.result).show();
+					};
+					reader.readAsDataURL(file);
+				} else {
+					Swal.fire('خطأ', 'يرجى اختيار صورة بصيغة JPG فقط', 'error');
+					$(this).val('');
+					$('#previewImage').hide();
+				}
+			});
+
+
+									$(document).ready(function () {
+				$.ajax({
+					url: '@Url.Action("GetNextClientCode", "Client")',
+					type: 'GET',
+					dataType: 'json',
+					success: function (response) {
+						if (response.nextCode) {
+							$('#ClientCodeInput').val(response.nextCode);
+						} else {
+							console.warn("No nextCode received.");
+						}
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						console.error("Error retrieving the next code:", errorThrown);
+					}
+				});	$("#btnDelete").click(function () {
+				// Get the record's ID from a hidden field or another element
+				var id = $("#ClientId").val();
+				if (!id) {
+					Swal.fire("تنبيه", "Please select a record first.", "warning");
+					return;
+				}
+
+				// Show confirmation dialog
+				Swal.fire({
+					title: 'هل أنت متأكد؟',
+					text: "لن تتمكن من التراجع عن هذا الإجراء!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'نعم، احذفها!',
+					cancelButtonText: 'إلغاء'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						// If confirmed, send the delete request
+						$.ajax({
+							url: '@Url.Action("DeleteClient", "Client")',
+							type: 'POST',
+							data: { id: id },
+							success: function (response) {
+								// Assuming your API returns a success message (you can modify as needed)
+								Swal.fire("تم الحذف!", response.success, "success").then(function () {
+									location.reload();
+								});
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+								Swal.fire("خطأ", "Error deleting data: " + errorThrown, "error");
+							}
+						});
+					}
+				});
+			});
+
+				// Handler for the Add button
+						 $("#btnAdd").click(function (e) {
+			e.preventDefault(); // منع إعادة تحميل الصفحة
+
+			
+			var form = $('#ClientForm')[0];
+			var formData = new FormData(form); // يحتوي على كل الحقول + الصورة
+			var code = parseInt($('#ClientCodeInput').val()) || 0;
+							var name = $('#ClientNameInput').val();
+							var workPhoneNumber = $('#workPhoneNumber').val();
+							var faxNumber = $('#faxNumber').val();
+							var mobileNumber = $('#mobileNumber').val();
+							var IssureDate = $('#IssureDate').val();
+							var address = $('#address').val();
+							var responsiblePerson = $('#responsiblePerson').val();
+							var nationalNumber = $('#nationalNumber').val();
+							var source = $('#source').val();
+							var email = $('#email').val();
+							var image = $('#ClientImageInput')[0].files[0];
+							var errors = "";
+							if (!name || name.trim() === "")
+								errors += "اسم الموكل مطلوب<br/>";
+							if (name && name.length > 100)
+								errors += "لا يمكن أن يتجاوز الاسم 100 حرف<br/>";
+							if (!image)
+								errors += "الرجاء اختيار صورة<br/>";
+							else if (image.type !== "image/jpeg")
+								errors += "يجب اختيار صورة بصيغة JPG فقط<br/>";
+							if (errors !== "") {
+								Swal.fire('خطأ', errors, 'error');
+								return;
+							}
+			$.ajax({
+				url: '/Client/AddClient', // أو @Url.Action إذا كنت داخل Razor
+				type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					if (response.success) {
+						Swal.fire('نجاح', response.message, 'success').then(function () {
+							location.reload();
+						});
+					} else {
+						Swal.fire('خطأ', response.message, 'error');
+					}
+				},
+				error: function (jqXHR) {
+					let errors = "";
+					const responseErrors = jqXHR.responseJSON;
+					if (responseErrors) {
+						$.each(responseErrors, function (key, value) {
+							errors += value.join("<br/>") + "<br/>";
+						});
+					} else {
+						errors = jqXHR.statusText;
+					}
+					Swal.fire('خطأ', errors, 'error');
+				}
+			});
+						}); // <-- THIS was missing
+				// Handler for the Edit button
+				$("#btnEdit").click(function (e) {
+						e.preventDefault(); // منع إعادة تحميل الصفحة
+
+
+			var form = $('#ClientForm')[0];
+					var formData = new FormData(form); // يحتوي على كل الحقول + الصورة
+			var code = parseInt($('#ClientCodeInput').val()) || 0;
+							var name = $('#ClientNameInput').val();
+							var workPhoneNumber = $('#workPhoneNumber').val();
+							var faxNumber = $('#faxNumber').val();
+							var mobileNumber = $('#mobileNumber').val();
+							var IssureDate = $('#IssureDate').val();
+							var address = $('#address').val();
+							var responsiblePerson = $('#responsiblePerson').val();
+							var nationalNumber = $('#nationalNumber').val();
+							var source = $('#source').val();
+							var email = $('#email').val();
+							var image = $('#ClientImageInput')[0].files[0];
+							var errors = "";
+							if (!name || name.trim() === "")
+								errors += "اسم الموكل مطلوب<br/>";
+							if (name && name.length > 100)
+								errors += "لا يمكن أن يتجاوز الاسم 100 حرف<br/>";
+							
+							if (errors !== "") {
+								Swal.fire('خطأ', errors, 'error');
+								return;
+							}
+
+					// AJAX call for EditClient
+					$.ajax({
+						url: '@Url.Action("EditClient", "Client")',
+						type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+						success: function (response) {
+							if (response.success) {
+								Swal.fire('نجاح', response.message, 'success').then(function () {
+									location.reload();
+								});
+							} else {
+								Swal.fire('خطأ', response.message, 'error');
+							}
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+							var errors = "";
+							var responseErrors = jqXHR.responseJSON;
+							if (responseErrors) {
+								$.each(responseErrors, function (key, value) {
+									errors += value.join("<br/>") + "<br/>";
+								});
+							} else {
+								errors = errorThrown;
+							}
+							Swal.fire('خطأ', errors, 'error');
+						}
+					});
+				});
+
+				// Handler for the Min button (gets record with minimum code)
+							$("#btnMin").click(async function () {
+			try {
+			const response = await $.ajax({
+			type: "GET",
+			url: '@Url.Action("GetMinClient", "Client")',
+			dataType: "json"
+			});
+
+			
+				if (response) {
+					// تعبئة الحقول
+					$("#ClientId").val(response.id);
+					$("#ClientCodeInput").val(response.code);
+					$("#ClientNameInput").val(response.clientName);
+					$("#workPhoneNumber").val(response.workPhoneNumber);
+					$("#faxNumber").val(response.faxNumber);
+					$("#mobileNumber").val(response.mobileNumber);
+					$("#IssureDate").val(response.issueDate);
+					$("#address").val(response.address);
+					$("#responsiblePerson").val(response.responsiblePerson);
+					$("#nationalNumber").val(response.nationalNumber);
+					$("#source").val(response.source);
+					$("#date").val(response.dateNow);
+					$("#lastBalance").val(response.lastBalance);
+					$("#email").val(response.email);
+
+					// الصورة
+								if (response.clientImageBase64) {
+				const imageUrl = "data:image/jpeg;base64," + response.clientImageBase64;
+				$("#previewImage").attr("src", imageUrl).show();
+				$("#OldImageBase64").val(response.clientImageBase64);
+			} else {
+				$("#previewImage").hide();
+				$("#OldImageBase64").val("");
+			}
+
+				} else {
+					Swal.fire("خطأ", "لم يتم العثور على أي بيانات.", "error");
+				}
+			} catch (error) {
+				console.error("Error fetching min Client:", error);
+				Swal.fire("خطأ", "حدث خطأ أثناء جلب البيانات.", "error");
+			}
+			}); // <-- THIS was missing				// Handler for the Max button (gets record with maximum code)
+							$("#btnMax").click(async function () {
+			try {
+			const response = await $.ajax({
+			type: "GET",
+			url: '@Url.Action("GetMaxClient", "Client")',
+			dataType: "json"
+			});
+
+			
+				if (response) {
+					console.log(response);
+
+					// تعبئة الحقول
+					$("#ClientId").val(response.id);
+					$("#ClientCodeInput").val(response.code);
+					$("#ClientNameInput").val(response.clientName);
+					$("#workPhoneNumber").val(response.workPhoneNumber);
+					$("#faxNumber").val(response.faxNumber);
+					$("#mobileNumber").val(response.mobileNumber);
+					$("#IssureDate").val(response.issueDate);
+					$("#address").val(response.address);
+					$("#responsiblePerson").val(response.responsiblePerson);
+					$("#nationalNumber").val(response.nationalNumber);
+					$("#source").val(response.source);
+					$("#date").val(response.dateNow);
+					$("#lastBalance").val(response.lastBalance);
+					$("#email").val(response.email);
+
+					// عرض الصورة إن وجدت
+								if (response.clientImageBase64) {
+				const imageUrl = "data:image/jpeg;base64," + response.clientImageBase64;
+				$("#previewImage").attr("src", imageUrl).show();
+				$("#OldImageBase64").val(response.clientImageBase64);
+			} else {
+				$("#previewImage").hide();
+				$("#OldImageBase64").val("");
+			}
+
+
+				} 
+				else {
+					Swal.fire("خطأ", "لم يتم العثور على بيانات.", "error");
+				}
+			} catch (error) {
+				console.error("Error fetching max Client:", error);
+				Swal.fire("خطأ", "حدث خطأ أثناء جلب البيانات.", "error");
+			}
+			}); // <-- THIS was missing
+				// Handler for the Previous button
+				$("#btnPrevious").click(async function () {
+					const ClientId =$("#ClientId").val();
+					// console.log(ClientId);
+
+					// console.log(typeof(+ClientId));
+					// if (+ClientId!==0) {
+					//     Swal.fire("تنبيه", "Please select a record first.", "warning");
+					//     return;
+					// }
+					try {
+						const response = await $.ajax({
+							type: "GET",
+							url: '@Url.Action("GetPreviousClient", "Client", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", +ClientId),
+							dataType: "json"
+						});
+									if (response) {
+								console.log(response);
+
+								// تعبئة الحقول
+								$("#ClientId").val(response.id);
+								$("#ClientCodeInput").val(response.code);
+								$("#ClientNameInput").val(response.clientName);
+								$("#workPhoneNumber").val(response.workPhoneNumber);
+								$("#faxNumber").val(response.faxNumber);
+								$("#mobileNumber").val(response.mobileNumber);
+								$("#IssureDate").val(response.issueDate);
+								$("#address").val(response.address);
+								$("#responsiblePerson").val(response.responsiblePerson);
+								$("#nationalNumber").val(response.nationalNumber);
+								$("#source").val(response.source);
+								$("#date").val(response.dateNow);
+								$("#lastBalance").val(response.lastBalance);
+								$("#email").val(response.email);
+
+								// عرض الصورة إن وجدت
+										if (response.clientImageBase64) {
+				const imageUrl = "data:image/jpeg;base64," + response.clientImageBase64;
+				$("#previewImage").attr("src", imageUrl).show();
+				$("#OldImageBase64").val(response.clientImageBase64);
+			} else {
+				$("#previewImage").hide();
+				$("#OldImageBase64").val("");
+			}
+
+
+							}
+									else {
+							Swal.fire("تنبيه", "No previous record found.", "info");
+						}
+					} catch (error) {
+						 // If the status code is 404, display a specific warning message.
+			if (error.status == 404) {
+				Swal.fire("تنبيه", "لا يوجد الموكل قبل تلك", "info");
+			} else {
+				console.error("Error fetching previous Client:", error);
+				Swal.fire("خطأ", "Error fetching data.", "error");
+			}
+					}
+				});
+
+				// Handler for the Next button
+				$("#btnNext").click(async function () {
+					const ClientId =parseInt( $("#ClientId").val());
+					// console.log(ClientId);
+					// console.log(typeof(ClientId));
+					// if (+ClientId!==0) {
+					//     Swal.fire("تنبيه", "Please select a record first.", "warning");
+					//     return;
+					// }
+					try {
+						const response = await $.ajax({
+							type: "GET",
+							url: '@Url.Action("GetNextClient", "Client", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", +ClientId),
+							dataType: "json"
+						});
+									if (response) {
+								console.log(response);
+
+								// تعبئة الحقول
+								$("#ClientId").val(response.id);
+								$("#ClientCodeInput").val(response.code);
+								$("#ClientNameInput").val(response.clientName);
+								$("#workPhoneNumber").val(response.workPhoneNumber);
+								$("#faxNumber").val(response.faxNumber);
+								$("#mobileNumber").val(response.mobileNumber);
+								$("#IssureDate").val(response.issueDate);
+								$("#address").val(response.address);
+								$("#responsiblePerson").val(response.responsiblePerson);
+								$("#nationalNumber").val(response.nationalNumber);
+								$("#source").val(response.source);
+								$("#date").val(response.dateNow);
+								$("#lastBalance").val(response.lastBalance);
+								$("#email").val(response.email);
+
+								// عرض الصورة إن وجدت
+											if (response.clientImageBase64) {
+				const imageUrl = "data:image/jpeg;base64," + response.clientImageBase64;
+				$("#previewImage").attr("src", imageUrl).show();
+				$("#OldImageBase64").val(response.clientImageBase64);
+			} else {
+				$("#previewImage").hide();
+				$("#OldImageBase64").val("");
+			}
+
+
+							}
+									else {
+							Swal.fire("تنبيه", "No next record found.", "info");
+						}
+					} catch (error) {
+						// If the status code is 404, display a specific warning message.
+			if (error.status == 404) {
+				Swal.fire("تنبيه", "لا يوجد الموكل بعد تلك.", "info");
+			} else {
+				console.error("Error fetching previous Client:", error);
+				Swal.fire("خطأ", "Error fetching data.", "error");
+			}
+					}
+				});
+			});
+		</script>
+	}

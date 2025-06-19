@@ -1,0 +1,706 @@
+﻿@using Law.CORE.ViewModels
+@model UpdateIssueFile
+<style>
+	.custom-input {
+		font-size: 0.85rem;
+		padding: 0.25rem 0.5rem;
+	}
+
+	.custom-button {
+		margin: 0.2rem;
+		padding: 0.3rem 0.6rem;
+		font-size: 0.85rem;
+	}
+
+	.custom-form-group {
+		margin-bottom: 0.4rem;
+	}
+
+	.card-header {
+		padding: 0.5rem 1rem;
+	}
+
+	.form-label {
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+
+	.form-control-sm {
+		font-size: 0.85rem;
+		padding: 0.25rem 0.5rem;
+	}
+</style>
+<div class="col-12 grid-margin stretch-card">
+	<div class="card">
+		<div class="d-flex m-3 justify-content-between">
+			<div>
+				<h1 class="card-title text-dark font-weight-bold fs-2">ملف القضايا</h1>
+			</div>
+			<div class="d-flex justify-content-end navigation-buttons">
+				<div class="btn btn-primary btn-sm custom-button" id="btnMin">
+					<i class="fa fa-angle-double-right"></i>
+				</div>
+				<div class="btn btn-primary btn-sm custom-button" id="btnPrevious">
+					<i class="fa fa-angle-right"></i>
+				</div>
+				<div class="btn btn-primary btn-sm custom-button" id="btnNext">
+					<i class="fa fa-angle-left">
+
+					</i>
+				</div>
+				<div class="btn btn-primary btn-sm custom-button" id="btnMax">
+					<i class="fa fa-angle-double-left"></i>
+				</div>
+			</div>
+		</div>
+		<div class="card-body">
+			<form id="IssueFileForm" enctype="multipart/form-data">
+				<input type="hidden" asp-for="Id" id="IssueFileId"  />
+				<input type="hidden" id="OldImageBase64" asp-for="OldImageBase64" />
+				<div class="row row-cols-3 g-2" style="height: 100px;">
+					<div class="col-2">
+						<label class="form-label">رقم القضية</label>
+						<input id="IssueFileCodeInput" asp-for="Code" type="number" class="form-control form-control-sm" placeholder="ادخل رقم الموكل" readonly />
+					</div>
+					<div class="col-5">
+						<label class="form-label"> رقم المعامله </label>
+						<input id="IssueNumber" asp-for="IssueNumber" type="text" class="form-control form-control-sm" placeholder="ادخل مسمي القضية" />
+					</div>
+					<div class="col-5">
+						<label class="form-label">صورة القضية (JPG فقط)</label>
+						<div class="d-flex align-items-start gap-3">
+							<div class="flex-grow-1">
+								<input id="IssueFileImageInput" asp-for="IssueImage" type="file" accept=".jpg,.jpeg" class="form-control form-control-sm" />
+							</div>
+							<div>
+								<img id="previewImage" src="#" alt="معاينة الصورة"
+									 style="display:none; width: 100px; height: 100px; object-fit: cover; border: 2px solid #ccc; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);" />
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+				<div class="row  g-2">
+					<div class="col-12">
+						<label class="form-label">  اسم القضية  </label>
+						<input id="IssueName" asp-for="IssueName" type="text" class="form-control form-control-sm" placeholder="ادخل اسم القضية" />
+
+					</div>
+				</div>
+				<div class="row  g-2">
+					<div class="col-3 ">
+						<label class="form-label">  الموكلين  </label>
+						<select asp-items=" ViewBag.listClients" asp-for="ClientId" id="ClientId" class="form-control form-control-sm">
+							<option value="0">اختر الموكل</option>
+						</select>
+
+					</div>
+					<div class="col-9 ">
+						<label class="form-label">  العنوان  </label>
+						<input id="ClientAddress" asp-for="ClientAddress" type="text" class="form-control form-control-sm" placeholder="ادخل العنوان" />
+
+					</div>
+					
+				</div>
+				<div class="row  g-2">
+					<div class="col-3">
+						<label class="form-label"> تاريخ  </label>
+						<input id="IssureDate" asp-for="DateNow" type="date" class="form-control form-control-sm" />
+
+					</div>
+
+					<div class="col-3 ">
+						<label class="form-label">   هاتف عمل الموكل </label>
+						<input id="ClientPhoneNumber" asp-for="ClientPhoneNumber" type="text" class="form-control form-control-sm" placeholder="ادخل   هاتف عمل الموكل" />
+
+					</div>
+					<div class="col-3 ">
+						<label class="form-label">   صفة الموكل </label>
+						<input id="ClientProperty" asp-for="ClientProperty" type="text" class="form-control form-control-sm" placeholder="ادخل  صفة الموكل" />
+
+					</div>
+				</div>
+				<br />
+				<hr />
+				<br />
+				<div class="row  g-2">
+					<div class="col-3 ">
+						<label class="form-label">   الخصوم  </label>
+						<select id="PartyId" asp-items="ViewBag.listParties" asp-for="PartyId" class="form-control form-control-sm">
+							<option value="0">اختر الخصم</option>
+						</select>
+
+					</div>
+					<div class="col-9 ">
+						<label class="form-label">  العنوان  </label>
+						<input id="PartyAddress" asp-for="PartyAddress" type="text" class="form-control form-control-sm" placeholder="ادخل العنوان" />
+
+					</div>
+				
+					
+
+				</div>
+				<div class="row  g-2">
+					<div class="col-3 ">
+						<label class="form-label">هاتف الخصم</label>
+						<input id="PartyPhoneNumber" asp-for="PartyPhoneNumber" type="text" class="form-control form-control-sm" placeholder="ادخل هاتف الخصم" />
+
+					</div>
+					<div class="col-9 ">
+						<label class="form-label">  مكان عمل الخصم  </label>
+						<input id="PartyWorkPlace" asp-for="PartyWorkPlace" type="text" class="form-control form-control-sm" placeholder="ادخل  مكان عمل الخصم " />
+
+					</div>
+					
+				</div>
+				<br />
+				<hr />
+				<br />
+				<div class="row  g-2">
+					<div class="col-3">
+						<label class="form-label">  نوع القضايا  </label>
+						<select id="IssueTypeId" asp-for="IssueTypeId" asp-items="ViewBag.listIssueTypies" class="form-control form-control-sm">
+							<option value="0">اختر نوع القضية</option>
+						</select>
+
+					</div>
+					<div class="col-9">
+						<label class="form-label">  موضوع القضية  </label>
+						<input id="IssueDescription" asp-for="IssueDescription" type="text" class="form-control form-control-sm" placeholder="ادخل موضوع القضية" />
+
+					</div>
+
+				</div>
+				<div class="row  g-2">
+					<div class="col-3">
+						<label class="form-label"> وردت التاريخ </label>
+						<input id="DateNextSession" type="date" asp-for="DateNextSession" class="form-control form-control-sm" placeholder="ادخل التاريخ" />
+
+					</div>
+					<div class="col-3">
+						<label class="form-label">الاتعاب القضية  </label>
+						<input id="IssueValueFees" asp-for="IssueValueFees" type="number" class="form-control form-control-sm" placeholder="ادخل الرصيد السابق" />
+
+					</div>
+					<div class="col-3">
+						<label class="form-label">  درجة التفاوض   </label>
+						<input id="IssueDegreeNegotiation" asp-for="IssueDegreeNegotiation" type="text" class="form-control form-control-sm" placeholder="ادخل   درجة التفاوض " />
+
+					</div>
+						<div class="col-3">
+						<label class="form-label">  لسنة    </label>
+						<input id="YearOfIssue" asp-for="YearOfIssue" type="text" class="form-control form-control-sm" placeholder="ادخل   درجة التفاوض " />
+
+					</div>
+				</div>
+				<br />
+				<hr />
+				<br />
+				<div class="row  g-2">
+					<div class="col-3">
+						<label class="form-label">   المحاكم  </label>
+						<select id="CourtId" asp-for="CourtId" asp-items="ViewBag.listCourts" class="form-control form-control-sm">
+							<option value="0">اختر المحكمة </option>
+						</select>
+					</div>
+					<div class="col-3">
+						<label class="form-label">   الدائرة  </label>
+						<select id="CenterId" asp-for="CenterId" asp-items="ViewBag.listCenters" class="form-control form-control-sm">
+							<option value="0">اختر الدائرة </option>
+						</select>
+					</div>
+					<div class="col-6">
+						<label class="form-label">حكم</label>
+						<textarea id="RuleOfIssue" asp-for="RuleOfIssue" class="form-control form-control-sm" placeholder="ادخل مسمي القضية" rows="6"></textarea>
+
+					</div>
+				</div>
+				<div class="row  g-2">
+					
+				</div>
+				<div class="form-group custom-form-group mt-3">
+					<button type="button" class="btn btn-success btn-sm custom-button" id="btnAdd">حفظ</button>
+					<button type="button" class="btn btn-secondary btn-sm custom-button" id="btnEdit">تعديل</button>
+					<button type="button" class="btn btn-danger btn-sm custom-button" id="btnDelete">حذف</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>	
+@section Scripts {
+		<!-- jQuery -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<!-- SweetAlert2 for alerts -->
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script>
+						$('#IssueFileImageInput').change(function () {
+				const file = this.files[0];
+
+				if (file && file.type === 'image/jpeg') {
+					const reader = new FileReader();
+					reader.onload = function (e) {
+						$('#previewImage').attr('src', e.target.result).show();
+					};
+					reader.readAsDataURL(file);
+				} else {
+					Swal.fire('خطأ', 'يرجى اختيار صورة بصيغة JPG فقط', 'error');
+					$(this).val('');
+					$('#previewImage').hide();
+				}
+			});
+
+
+									$(document).ready(function () {
+				$.ajax({
+					url: '@Url.Action("GetNextIssueFileCode", "IssueFile")',
+					type: 'GET',
+					dataType: 'json',
+					success: function (response) {
+						if (response.nextCode) {
+							$('#IssueFileCodeInput').val(response.nextCode);
+						} else {
+							console.warn("No nextCode received.");
+						}
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						console.error("Error retrieving the next code:", errorThrown);
+					}
+				});	
+				$("#btnDelete").click(function () {
+				// Get the record's ID from a hidden field or another element
+				var id = $("#IssueFileId").val();
+				if (!id) {
+					Swal.fire("تنبيه", "Please select a record first.", "warning");
+					return;
+				}
+
+				// Show confirmation dialog
+				Swal.fire({
+					title: 'هل أنت متأكد؟',
+					text: "لن تتمكن من التراجع عن هذا الإجراء!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'نعم، احذفها!',
+					cancelButtonText: 'إلغاء'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						// If confirmed, send the delete request
+						$.ajax({
+							url: '@Url.Action("DeleteIssueFile", "IssueFile")',
+							type: 'POST',
+							data: { id: id },
+							success: function (response) {
+								// Assuming your API returns a success message (you can modify as needed)
+								Swal.fire("تم الحذف!", response.success, "success").then(function () {
+									location.reload();
+								});
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+								Swal.fire("خطأ", "Error deleting data: " + errorThrown, "error");
+							}
+						});
+					}
+				});
+			});
+
+				// Handler for the Add button
+						 $("#btnAdd").click(function (e) {
+			e.preventDefault(); // منع إعادة تحميل الصفحة
+			var errors = "";
+			
+			var form = $('#IssueFileForm')[0];
+			var formData = new FormData(form); // يحتوي على كل الحقول + الصورة
+			var code = parseInt($('#IssueFileCodeInput').val()) || 0;
+							var name = $('#IssueName').val();
+									var partyId = parseInt($('#PartyId').val()) || 0;
+									console.log(partyId);
+		if (partyId === 0)
+			errors += "الرجاء اختيار الخصم<br/>";
+					var clientId = parseInt($('#ClientId').val()) || 0;
+		if (clientId === 0)
+			errors += "الرجاء اختيار الموكل<br/>";
+					var issueTypeId = parseInt($('#IssueTypeId').val()) || 0;
+
+		if (issueTypeId === 0)
+			errors += "الرجاء اختيار نوع القضية<br/>";
+					var courtId = parseInt($('#CourtId').val()) || 0;
+		if (courtId === 0)
+			errors += "الرجاء اختيار المحكمة<br/>";
+					var centerId = parseInt($('#CenterId').val()) || 0;
+		if (centerId === 0)
+			errors += "الرجاء اختيار الدائرة<br/>";
+					var negotiationDegree = $('#IssueDegreeNegotiation').val();
+		if (!negotiationDegree || negotiationDegree.trim() === "")
+			errors += "الرجاء إدخال درجة التفاوض<br/>";
+		else if (negotiationDegree.length > 100)
+			errors += "درجة التفاوض لا يمكن أن تتجاوز 100 حرف<br/>";
+					var valueFees = parseFloat($('#IssueValueFees').val());
+		if (isNaN(valueFees) || valueFees < 0)
+			errors += "الرجاء إدخال أتعاب القضية بشكل صحيح (رقم غير سالب)<br/>";
+
+							var image = $('#IssueFileImageInput')[0].files[0];
+							
+							if (!name || name.trim() === "")
+								errors += "اسم القضية مطلوب<br/>";
+							if (name && name.length > 100)
+								errors += "لا يمكن أن يتجاوز الاسم 100 حرف<br/>";
+							if (!image)
+								errors += "الرجاء اختيار صورة<br/>";
+							else if (image.type !== "image/jpeg")
+								errors += "يجب اختيار صورة بصيغة JPG فقط<br/>";
+							if (errors !== "") {
+								Swal.fire('خطأ', errors, 'error');
+								return;
+							}
+			$.ajax({
+				url: '/IssueFile/AddIssueFile', // أو @Url.Action إذا كنت داخل Razor
+				type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					if (response.success) {
+						Swal.fire('نجاح', response.message, 'success').then(function () {
+							location.reload();
+						});
+					} else {
+						Swal.fire('خطأ', response.message, 'error');
+					}
+				},
+				error: function (jqXHR) {
+					let errors = "";
+					const responseErrors = jqXHR.responseJSON;
+					if (responseErrors) {
+						$.each(responseErrors, function (key, value) {
+							errors += value.join("<br/>") + "<br/>";
+						});
+					} else {
+						errors = jqXHR.statusText;
+					}
+					Swal.fire('خطأ', errors, 'error');
+				}
+			});
+						}); 
+				// Handler for the Edit button
+				$("#btnEdit").click(function (e) {
+						e.preventDefault(); // منع إعادة تحميل الصفحة
+			var errors = "";
+
+			var form = $('#IssueFileForm')[0];
+			var formData = new FormData(form); // يحتوي على كل الحقول + الصورة
+			var code = parseInt($('#IssueFileCodeInput').val()) || 0;
+							var name = $('#IssueName').val();
+									var partyId = parseInt($('#PartyId').val()) || 0;
+									console.log(partyId);
+		if (partyId === 0)
+			errors += "الرجاء اختيار الخصم<br/>";
+					var clientId = parseInt($('#ClientId').val()) || 0;
+		if (clientId === 0)
+			errors += "الرجاء اختيار الموكل<br/>";
+					var issueTypeId = parseInt($('#IssueTypeId').val()) || 0;
+
+		if (issueTypeId === 0)
+			errors += "الرجاء اختيار نوع القضية<br/>";
+					var courtId = parseInt($('#CourtId').val()) || 0;
+		if (courtId === 0)
+			errors += "الرجاء اختيار المحكمة<br/>";
+					var centerId = parseInt($('#CenterId').val()) || 0;
+		if (centerId === 0)
+			errors += "الرجاء اختيار الدائرة<br/>";
+					var negotiationDegree = $('#IssueDegreeNegotiation').val();
+		if (!negotiationDegree || negotiationDegree.trim() === "")
+			errors += "الرجاء إدخال درجة التفاوض<br/>";
+		else if (negotiationDegree.length > 100)
+			errors += "درجة التفاوض لا يمكن أن تتجاوز 100 حرف<br/>";
+					var valueFees = parseFloat($('#IssueValueFees').val());
+		if (isNaN(valueFees) || valueFees < 0)
+			errors += "الرجاء إدخال أتعاب القضية بشكل صحيح (رقم غير سالب)<br/>";
+
+							var image = $('#IssueFileImageInput')[0].files[0];
+
+							if (!name || name.trim() === "")
+								errors += "اسم القضية مطلوب<br/>";
+							if (name && name.length > 100)
+								errors += "لا يمكن أن يتجاوز الاسم 100 حرف<br/>";
+							// if (!image)
+							// 	errors += "الرجاء اختيار صورة<br/>";
+							// else if (image.type !== "image/jpeg")
+							// 	errors += "يجب اختيار صورة بصيغة JPG فقط<br/>";
+							if (errors !== "") {
+								Swal.fire('خطأ', errors, 'error');
+								return;
+							}
+
+					// AJAX call for EditIssueFile
+					$.ajax({
+						url: '@Url.Action("EditIssueFile", "IssueFile")',
+						type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+						success: function (response) {
+							if (response.success) {
+								Swal.fire('نجاح', response.message, 'success').then(function () {
+									location.reload();
+								});
+							} else {
+								Swal.fire('خطأ', response.message, 'error');
+							}
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+							var errors = "";
+							var responseErrors = jqXHR.responseJSON;
+							if (responseErrors) {
+								$.each(responseErrors, function (key, value) {
+									errors += value.join("<br/>") + "<br/>";
+								});
+							} else {
+								errors = errorThrown;
+							}
+							Swal.fire('خطأ', errors, 'error');
+						}
+					});
+				});
+
+				// Handler for the Min button (gets record with minimum code)
+									$("#btnMin").click(async function () {
+			try {
+				const response = await $.ajax({
+					type: "GET",
+					url: '@Url.Action("GetMinIssueFile", "IssueFile")',
+					dataType: "json"
+				});
+
+				if (response) {
+					// تعبئة الحقول
+					$("#IssueFileId").val(response.id);
+					$("#IssueFileCodeInput").val(response.code);
+					$("#IssueNumber").val(response.issueNumber);
+					$("#IssueName").val(response.issueName);
+					$("#IssureDate").val(response.dateNow); // تأكد أن التنسيق مناسب لـ input date
+					$("#ClientId").val(response.clientId);
+					$("#ClientProperty").val(response.clientProperty);
+					$("#ClientPhoneNumber").val(response.clientPhoneNumber);
+					$("#ClientAddress").val(response.clientAddress);
+					$("#PartyId").val(response.partyId);
+					$("#PartyPhoneNumber").val(response.partyPhoneNumber);
+					$("#PartyAddress").val(response.partyAddress);
+					$("#PartyWorkPlace").val(response.partyWorkPlace);
+					$("#IssueTypeId").val(response.issueTypeId);
+					$("#IssueValueFees").val(response.issueValueFees);
+					$("#IssueDescription").val(response.issueDescription);
+					$("#IssueDegreeNegotiation").val(response.issueDegreeNegotiation);
+					$("#CourtId").val(response.courtId);
+					$("#CenterId").val(response.centerId);
+					$("#DateNextSession").val(response.dateNextSession);
+					$("#IssueNameInput").val(response.ruleOfIssue); // أو أي حقل آخر مناسب
+					$("#YearOfIssue").val(response.yearOfIssue); // أو أي حقل آخر مناسب
+					$("#OldImageBase64").val(response.oldImageBase64);
+					$("#RuleOfIssue").val(response.ruleOfIssue);
+
+					// الصورة
+					if (response.clientImageBase64) {
+						const imageUrl = "data:image/jpeg;base64," + response.clientImageBase64;
+						$("#previewImage").attr("src", imageUrl).show();
+					} else {
+						$("#previewImage").hide();
+					}
+				} else {
+					Swal.fire("خطأ", "لم يتم العثور على أي بيانات.", "error");
+				}
+			} catch (error) {
+				console.error("Error fetching min IssueFile:", error);
+				Swal.fire("خطأ", "حدث خطأ أثناء جلب البيانات.", "error");
+			}
+		});
+		 // <-- THIS was missing				// Handler for the Max button (gets record with maximum code)
+							$("#btnMax").click(async function () {
+			try {
+			const response = await $.ajax({
+			type: "GET",
+			url: '@Url.Action("GetMaxIssueFile", "IssueFile")',
+			dataType: "json"
+			});
+
+			
+				if (response) {
+					console.log(response);
+		$("#IssueFileId").val(response.id);
+							$("#IssueFileCodeInput").val(response.code);
+							$("#IssueNumber").val(response.issueNumber);
+							$("#IssueName").val(response.issueName);
+							$("#IssureDate").val(response.dateNow); // تأكد أن التنسيق مناسب لـ input date
+							$("#ClientId").val(response.clientId);
+							$("#ClientProperty").val(response.clientProperty);
+							$("#ClientPhoneNumber").val(response.clientPhoneNumber);
+							$("#ClientAddress").val(response.clientAddress);
+							$("#PartyId").val(response.partyId);
+							$("#PartyPhoneNumber").val(response.partyPhoneNumber);
+							$("#PartyAddress").val(response.partyAddress);
+							$("#PartyWorkPlace").val(response.partyWorkPlace);
+							$("#IssueTypeId").val(response.issueTypeId);
+							$("#IssueValueFees").val(response.issueValueFees);
+							$("#IssueDescription").val(response.issueDescription);
+							$("#IssueDegreeNegotiation").val(response.issueDegreeNegotiation);
+							$("#CourtId").val(response.courtId);
+							$("#CenterId").val(response.centerId);
+							$("#DateNextSession").val(response.dateNextSession);
+							$("#IssueNameInput").val(response.ruleOfIssue); // أو أي حقل آخر مناسب
+							$("#OldImageBase64").val(response.oldImageBase64);
+							$("#YearOfIssue").val(response.yearOfIssue);
+							$("#RuleOfIssue").val(response.ruleOfIssue);
+							// الصورة
+							if (response.clientImageBase64) {
+								const imageUrl = "data:image/jpeg;base64," + response.clientImageBase64;
+								$("#previewImage").attr("src", imageUrl).show();
+							} else {
+								$("#previewImage").hide();
+							}
+
+
+				} 
+				else {
+					Swal.fire("خطأ", "لم يتم العثور على بيانات.", "error");
+				}
+			} catch (error) {
+				console.error("Error fetching max IssueFile:", error);
+				Swal.fire("خطأ", "حدث خطأ أثناء جلب البيانات.", "error");
+			}
+			}); // <-- THIS was missing
+				// Handler for the Previous button
+				$("#btnPrevious").click(async function () {
+					const IssueFileId =$("#IssueFileId").val();
+					// console.log(IssueFileId);
+
+					// console.log(typeof(+IssueFileId));
+					// if (+IssueFileId!==0) {
+					//     Swal.fire("تنبيه", "Please select a record first.", "warning");
+					//     return;
+					// }
+					try {
+						const response = await $.ajax({
+							type: "GET",
+							url: '@Url.Action("GetPreviousIssueFile", "IssueFile", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", +IssueFileId),
+							dataType: "json"
+						});
+									if (response) {
+								console.log(response);
+		$("#IssueFileId").val(response.id);
+							$("#IssueFileCodeInput").val(response.code);
+							$("#IssueNumber").val(response.issueNumber);
+							$("#IssueName").val(response.issueName);
+							$("#IssureDate").val(response.dateNow); // تأكد أن التنسيق مناسب لـ input date
+							$("#ClientId").val(response.clientId);
+							$("#ClientProperty").val(response.clientProperty);
+							$("#ClientPhoneNumber").val(response.clientPhoneNumber);
+							$("#ClientAddress").val(response.clientAddress);
+							$("#PartyId").val(response.partyId);
+							$("#PartyPhoneNumber").val(response.partyPhoneNumber);
+							$("#PartyAddress").val(response.partyAddress);
+							$("#PartyWorkPlace").val(response.partyWorkPlace);
+							$("#IssueTypeId").val(response.issueTypeId);
+							$("#IssueValueFees").val(response.issueValueFees);
+							$("#IssueDescription").val(response.issueDescription);
+							$("#IssueDegreeNegotiation").val(response.issueDegreeNegotiation);
+							$("#CourtId").val(response.courtId);
+							$("#CenterId").val(response.centerId);
+							$("#DateNextSession").val(response.dateNextSession);
+							$("#IssueNameInput").val(response.ruleOfIssue); // أو أي حقل آخر مناسب
+							$("#OldImageBase64").val(response.oldImageBase64);
+							$("#YearOfIssue").val(response.yearOfIssue);
+							$("#RuleOfIssue").val(response.ruleOfIssue);
+							// الصورة
+							if (response.clientImageBase64) {
+								const imageUrl = "data:image/jpeg;base64," + response.clientImageBase64;
+								$("#previewImage").attr("src", imageUrl).show();
+							} else {
+								$("#previewImage").hide();
+							}
+
+
+							}
+									else {
+							Swal.fire("تنبيه", "No previous record found.", "info");
+						}
+					} catch (error) {
+						 // If the status code is 404, display a specific warning message.
+			if (error.status == 404) {
+				Swal.fire("تنبيه", "لا يوجد القضية قبل تلك", "info");
+			} else {
+				console.error("Error fetching previous IssueFile:", error);
+				Swal.fire("خطأ", "Error fetching data.", "error");
+			}
+					}
+				});
+
+				// Handler for the Next button
+				$("#btnNext").click(async function () {
+					const IssueFileId =parseInt( $("#IssueFileId").val());
+					// console.log(IssueFileId);
+					// console.log(typeof(IssueFileId));
+					// if (+IssueFileId!==0) {
+					//     Swal.fire("تنبيه", "Please select a record first.", "warning");
+					//     return;
+					// }
+					try {
+						const response = await $.ajax({
+							type: "GET",
+							url: '@Url.Action("GetNextIssueFile", "IssueFile", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", +IssueFileId),
+							dataType: "json"
+						});
+									if (response) {
+								console.log(response);
+
+								// تعبئة الحقول
+								$("#IssueFileId").val(response.id);
+					$("#IssueFileCodeInput").val(response.code);
+					$("#IssueNumber").val(response.issueNumber);
+					$("#IssueName").val(response.issueName);
+					$("#IssureDate").val(response.dateNow); // تأكد أن التنسيق مناسب لـ input date
+					$("#ClientId").val(response.clientId);
+					$("#ClientProperty").val(response.clientProperty);
+					$("#ClientPhoneNumber").val(response.clientPhoneNumber);
+					$("#ClientAddress").val(response.clientAddress);
+					$("#PartyId").val(response.partyId);
+					$("#PartyPhoneNumber").val(response.partyPhoneNumber);
+					$("#PartyAddress").val(response.partyAddress);
+					$("#PartyWorkPlace").val(response.partyWorkPlace);
+					$("#IssueTypeId").val(response.issueTypeId);
+					$("#IssueValueFees").val(response.issueValueFees);
+					$("#IssueDescription").val(response.issueDescription);
+					$("#IssueDegreeNegotiation").val(response.issueDegreeNegotiation);
+					$("#CourtId").val(response.courtId);
+					$("#CenterId").val(response.centerId);
+					$("#DateNextSession").val(response.dateNextSession);
+					$("#IssueNameInput").val(response.ruleOfIssue); // أو أي حقل آخر مناسب
+					$("#OldImageBase64").val(response.oldImageBase64);
+					$("#YearOfIssue").val(response.yearOfIssue);
+					$("#RuleOfIssue").val(response.ruleOfIssue);
+					// الصورة
+					if (response.clientImageBase64) {
+						const imageUrl = "data:image/jpeg;base64," + response.clientImageBase64;
+						$("#previewImage").attr("src", imageUrl).show();
+					} else {
+						$("#previewImage").hide();
+					}
+
+							}
+									else {
+							Swal.fire("تنبيه", "No next record found.", "info");
+						}
+					} catch (error) {
+						// If the status code is 404, display a specific warning message.
+			if (error.status == 404) {
+				Swal.fire("تنبيه", "لا يوجد القضية بعد تلك.", "info");
+			} else {
+				console.error("Error fetching previous IssueFile:", error);
+				Swal.fire("خطأ", "Error fetching data.", "error");
+			}
+					}
+				});
+			});
+		</script>
+	}

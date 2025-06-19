@@ -1,0 +1,692 @@
+﻿@using Law.CORE.ViewModels
+
+
+@model UpdateReceipt
+<style>
+    .custom-input {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .custom-button {
+        margin: 0.2rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .custom-form-group {
+        margin-bottom: 0.4rem;
+    }
+
+    .card-header {
+        padding: 0.5rem 1rem;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .form-control-sm {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="d-flex m-3 justify-content-between">
+            <div class="m-0">
+                <h1 class="card-title text-dark font-weight-bold fs-2">سند قبض</h1>
+            </div>
+
+            <div class="d-flex justify-content-end navigation-buttons">
+                <div class="btn btn-primary btn-sm custom-button" id="btnMin">
+                    <i class="fa fa-angle-double-right"></i>
+                </div>
+                <div class="btn btn-primary btn-sm custom-button" id="btnPrevious">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+                <div class="btn btn-primary btn-sm custom-button" id="btnNext">
+                    <i class="fa fa-angle-left"></i>
+                </div>
+                <div class="btn btn-primary btn-sm custom-button" id="btnMax">
+                    <i class="fa fa-angle-double-left"></i>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+        <div class="card-body">
+            <form id="ReceiptForm" class="forms-sample">
+                <!-- Hidden field for ID -->
+                <input type="hidden" asp-for="Id" id="ReceiptId"  />
+                <!-- صفوف الحقول -->
+                <div class="row row-cols-2 d-flex justify-content-between g-2">
+                    <div class="col-2">
+                        <label class="form-label">رقم السند </label>
+                        <input id="ReceiptCodeInput" asp-for="Code" readonly type="number" class="form-control form-control-sm" >
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label">تاريخ السند </label>
+						<input id="DateReceipt" asp-for="DateReceipt" type="date" class="form-control form-control-sm">
+                    </div>
+
+                </div>
+                <div class="row row-cols-3 g-2">
+                    <div class="col-md-3">
+                        <label class="form-label">اسم الموكل </label>
+                        <select id="ClientId" asp-for="ClientId" asp-items="ViewBag.listClients" type="text" class="form-control form-control-sm">
+                            <option>اختر الموكل</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="fs-6">المبلغ</label>
+                        <input type="number" asp-for="Amount"  id="amount" class="form-control form-control-sm" min="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fs-6">تفنيد المبلغ</label>
+                        <input type="text" asp-for="AmountName"  id="breakdown" class="form-control form-control-sm" readonly>
+                        <input type="hidden" name="AmountName" id="hiddenBreakdown">
+
+                    </div>
+                </div>
+                <div class="row custom-form-group">
+                    <div class="col-md-3">
+                        <label class="fs-6">   نوع الدفع  </label>
+                        <select asp-for="PaymentId" class="form-control form-control-sm" id="paymentMethod" onchange="toggleChequeDetails()">
+                            <option value="0"> اختر طريقة الدفع</option>
+                            <option value="1"> شيك</option>
+                            <option value="2"> نقدي</option>
+                        </select>
+                    </div>
+                    <div class="col-md-9">
+                        <label class="fs-6">   وذلك  </label>
+                        <input asp-for="Purpose" type="text" id="purpose" class="form-control form-control-sm ">
+
+                    </div>
+                </div>
+                <div class="row custom-form-group" id="chequeDetails">
+                    <div class="col-md-4">
+                        <label class="fs-6"> رقم الشيك     </label>
+                        <input type="number" asp-for="ChequeNumber" id="chequeNumber" class="form-control form-control-sm ">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fs-6">   تاريخ الشيك    </label>
+                        <input type="date" asp-for="ChequeDate" id="chequeDate" class="form-control form-control-sm ">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fs-6">اسم البنك</label>
+                        <input type="text" asp-for="BankName" id="bankName" class="form-control form-control-sm ">
+                    </div>
+                </div>
+                <div class="row custom-form-group">
+                    <div class="col-md-4">
+                        <label class="fs-6">   نوع التصميم  </label>
+                        <select id="DesignType" asp-for="DesignType" class="form-control form-control-sm">
+                            <option value="0"> اختر نوع التصميم</option>
+                            <option value="1"> ابتدائي</option>
+                            <option value="2"> نهائي</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fs-6">   رقم المخطط  </label>
+                        <input type="number" id="DesignNumber" asp-for="DesignNumber" class="form-control form-control-sm ">
+
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fs-6">   رقم المشروع  </label>
+                        <input type="number" id="ProjectNumber" asp-for="ProjectNumber" class="form-control form-control-sm ">
+
+                    </div>
+                </div>
+                <div class="row custom-form-group">
+                    <div class="col-md-12">
+                        <label class="fs-6">اسم المخطط</label>
+                        <input type="text" id="ProjectName" asp-for="ProjectName" class="form-control form-control-sm ">
+                    </div>
+                </div>
+                <div class="form-group custom-form-group">
+
+                    <button type="button" class="btn btn-success btn-sm custom-button" id="btnAdd">حفظ</button>
+
+                    <button type="button" class="btn btn-secondary btn-sm custom-button" id="btnEdit">تعديل</button>
+                    <button type="button" class="btn btn-secondary btn-sm custom-button" id="btnPrint">طباعة</button>
+                    <button type="button" class="btn btn-danger btn-sm custom-button" id="btnDelete">حذف</button>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+	@section Scripts {
+		<!-- jQuery -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<!-- SweetAlert2 for alerts -->
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+
+<script>
+     document.addEventListener("DOMContentLoaded", function () {
+        let amountInput = document.getElementById("amount");
+        let breakdownInput = document.getElementById("breakdown");
+
+        amountInput.addEventListener("input", updateBreakdown);
+        updateBreakdown();
+
+        // Enable the breakdown field before form submission
+        document.getElementById("receiptForm").addEventListener("submit", function () {
+            breakdownInput.removeAttribute("disabled");
+        });
+    });
+
+    function updateBreakdown() {
+        let amountInput = document.getElementById("amount");
+        let breakdownInput = document.getElementById("breakdown");
+        let amount = parseInt(amountInput.value) || 0;
+        breakdownInput.value = convertToArabicWords(amount) + " فقط لا غير";
+    }
+
+    function convertToArabicWords(num) {
+        if (num === 0) return "صفر جنيهاً مصرياً";
+
+        let ones = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
+        let tens = ["", "", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"];
+        let teens = ["عشرة", "أحد عشر", "اثنا عشر", "ثلاثة عشر", "أربعة عشر", "خمسة عشر", "ستة عشر", "سبعة عشر", "ثمانية عشر", "تسعة عشر"];
+        let hundreds = ["", "مائة", "مئتان", "ثلاثمائة", "أربعمائة", "خمسمائة", "ستمائة", "سبعمائة", "ثمانمائة", "تسعمائة"];
+
+        function convertChunk(n) {
+            let result = "";
+            if (n >= 100) {
+                let hundredsPart = Math.floor(n / 100);
+                let remainder = n % 100;
+                result += hundreds[hundredsPart];
+
+                if (remainder > 0) {
+                    result += " و " + convertChunk(remainder);
+                }
+                return result;
+            }
+            if (n >= 10 && n < 20) {
+                return teens[n - 10];
+            }
+            if (n >= 20) {
+                result += tens[Math.floor(n / 10)];
+                let remainder = n % 10;
+                if (remainder > 0) {
+                    result += " و " + ones[remainder];
+                }
+                return result;
+            }
+            return ones[n];
+        }
+
+        let words = [];
+
+        if (num >= 1000000) {
+            let millions = Math.floor(num / 1000000);
+            words.push(millions === 1 ? "مليون" : millions === 2 ? "مليونان" : convertChunk(millions) + " ملايين");
+            num %= 1000000;
+        }
+
+        if (num >= 1000) {
+            let thousands = Math.floor(num / 1000);
+            words.push(thousands === 1 ? "ألف" : thousands === 2 ? "ألفان" : thousands >= 3 && thousands <= 10 ? convertChunk(thousands) + " آلاف" : convertChunk(thousands) + " ألف");
+            num %= 1000;
+        }
+
+        if (num > 0) {
+            words.push(convertChunk(num));
+        }
+
+        return words.filter(word => word).join(" و ") + " جنيهاً مصرياً";
+    }
+            document.addEventListener("DOMContentLoaded", function () {
+                let amountInput = document.getElementById("amount");
+                let breakdownInput = document.getElementById("breakdown");
+
+                amountInput.addEventListener("input", updateBreakdown);
+                updateBreakdown();
+
+                // Enable the breakdown field before form submission
+                document.getElementById("receiptForm").addEventListener("submit", function () {
+                    breakdownInput.removeAttribute("disabled");
+                });
+            });
+
+            function updateBreakdown() {
+                let amountInput = document.getElementById("amount");
+                let breakdownInput = document.getElementById("breakdown");
+                let amount = parseInt(amountInput.value) || 0;
+                breakdownInput.value = convertToArabicWords(amount) + " فقط لا غير";
+            }
+
+            function convertToArabicWords(num) {
+                if (num === 0) return "صفر جنيهاً مصرياً";
+
+                let ones = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
+                let tens = ["", "", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"];
+                let teens = ["عشرة", "أحد عشر", "اثنا عشر", "ثلاثة عشر", "أربعة عشر", "خمسة عشر", "ستة عشر", "سبعة عشر", "ثمانية عشر", "تسعة عشر"];
+                let hundreds = ["", "مائة", "مئتان", "ثلاثمائة", "أربعمائة", "خمسمائة", "ستمائة", "سبعمائة", "ثمانمائة", "تسعمائة"];
+
+                function convertChunk(n) {
+                    let result = "";
+                    if (n >= 100) {
+                        let hundredsPart = Math.floor(n / 100);
+                        let remainder = n % 100;
+                        result += hundreds[hundredsPart];
+
+                        if (remainder > 0) {
+                            result += " و " + convertChunk(remainder);
+                        }
+                        return result;
+                    }
+                    if (n >= 10 && n < 20) {
+                        return teens[n - 10];
+                    }
+                    if (n >= 20) {
+                        result += tens[Math.floor(n / 10)];
+                        let remainder = n % 10;
+                        if (remainder > 0) {
+                            result += " و " + ones[remainder];
+                        }
+                        return result;
+                    }
+                    return ones[n];
+                }
+
+                let words = [];
+
+                if (num >= 1000000) {
+                    let millions = Math.floor(num / 1000000);
+                    words.push(millions === 1 ? "مليون" : millions === 2 ? "مليونان" : convertChunk(millions) + " ملايين");
+                    num %= 1000000;
+                }
+
+                if (num >= 1000) {
+                    let thousands = Math.floor(num / 1000);
+                    words.push(thousands === 1 ? "ألف" : thousands === 2 ? "ألفان" : thousands >= 3 && thousands <= 10 ? convertChunk(thousands) + " آلاف" : convertChunk(thousands) + " ألف");
+                    num %= 1000;
+                }
+
+                if (num > 0) {
+                    words.push(convertChunk(num));
+                }
+
+                return words.filter(word => word).join(" و ") + " جنيهاً مصرياً";
+            }
+
+</script>
+<script>
+    function toggleChequeDetails() {
+        var paymentMethod = document.getElementById("paymentMethod").value;
+        var chequeDetails = document.getElementById("chequeDetails");
+
+        if (paymentMethod == "2") { // نقدي
+            chequeDetails.style.display = "none";
+        } else {
+            chequeDetails.style.display = "flex"; // Show div
+        }
+    }
+
+    // Run on page load to apply initial state
+    window.onload = toggleChequeDetails;
+</script>
+<script>
+		$(document).ready(function () {
+					$("#btnPrint").click(function () {
+			const receiptId = $("#ReceiptId").val();
+			if (receiptId) {
+				window.open("/Receipt/PrintReceipt/" + receiptId, "_blank");
+			}else{
+					Swal.fire("تنبيه", "رجا اختر سند قبض من الاسهام.", "warning");
+						return;
+			}
+		});
+
+				$.ajax({
+					url: '@Url.Action("GetNextReceiptCode", "Receipt")',
+					type: 'GET',
+					dataType: 'json',
+					success: function (response) {
+						if (response.nextCode) {
+							$('#ReceiptCodeInput').val(response.nextCode);
+						} else {
+							console.warn("No nextCode received.");
+						}
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						console.error("Error retrieving the next code:", errorThrown);
+					}
+				});	$("#btnDelete").click(function () {
+				// Get the record's ID from a hidden field or another element
+				var id = $("#ReceiptId").val();
+				if (!id) {
+					Swal.fire("تنبيه", "Please select a record first.", "warning");
+					return;
+				}
+
+				// Show confirmation dialog
+				Swal.fire({
+					title: 'هل أنت متأكد؟',
+					text: "لن تتمكن من التراجع عن هذا الإجراء!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'نعم، احذفها!',
+					cancelButtonText: 'إلغاء'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						// If confirmed, send the delete request
+						$.ajax({
+							url: '@Url.Action("DeleteReceipt", "Receipt")',
+							type: 'POST',
+							data: { id: id },
+							success: function (response) {
+								// Assuming your API returns a success message (you can modify as needed)
+								Swal.fire("تم الحذف!", response.success, "success").then(function () {
+									location.reload();
+								});
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+								Swal.fire("خطأ", "Error deleting data: " + errorThrown, "error");
+							}
+						});
+					}
+				});
+			});
+
+				// Handler for the Add button
+						 $("#btnAdd").click(function (e) {
+			e.preventDefault(); // منع إعادة تحميل الصفحة
+
+
+			var form = $('#ReceiptForm')[0];
+			var formData = new FormData(form); // يحتوي على كل الحقول + الصورة
+			var ClientId = parseInt($('#ClientId').val()) || 0;
+			var amount = parseFloat($('#amount').val()) || 0;
+							
+							
+							var errors = "";
+							if (ClientId ===0)
+								errors += "رجا اختر الموكل<br/>";
+		if (amount ===0)
+										errors += "رجا ادخل المبلغ <br/>";
+
+									if (errors !== "") {
+								Swal.fire('خطأ', errors, 'error');
+								return;
+							}
+			$.ajax({
+				url: '/Receipt/AddReceipt', // أو @Url.Action إذا كنت داخل Razor
+				type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					if (response.success) {
+						Swal.fire('نجاح', response.message, 'success').then(function () {
+							location.reload();
+						});
+					} else {
+						Swal.fire('خطأ', response.message, 'error');
+					}
+				},
+				error: function (jqXHR) {
+					let errors = "";
+					const responseErrors = jqXHR.responseJSON;
+					if (responseErrors) {
+						$.each(responseErrors, function (key, value) {
+							errors += value.join("<br/>") + "<br/>";
+						});
+					} else {
+						errors = jqXHR.statusText;
+					}
+					Swal.fire('خطأ', errors, 'error');
+				}
+			});
+						}); // <-- THIS was missing
+				// Handler for the Edit button
+				$("#btnEdit").click(function (e) {
+						e.preventDefault(); // منع إعادة تحميل الصفحة
+
+
+			var form = $('#ReceiptForm')[0];
+					var formData = new FormData(form); // يحتوي على كل الحقول + الصورة
+			var ClientId = parseInt($('#ClientId').val()) || 0;
+			var amount = parseFloat($('#amount').val()) || 0;
+
+
+							var errors = "";
+							if (ClientId ===0)
+								errors += "رجا اختر الموكل<br/>";
+		if (amount ===0)
+										errors += "رجا ادخل المبلغ <br/>";
+
+									if (errors !== "") {
+								Swal.fire('خطأ', errors, 'error');
+								return;
+							}	
+
+					// AJAX call for EditReceipt
+					$.ajax({
+						url: '@Url.Action("EditReceipt", "Receipt")',
+						type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+						success: function (response) {
+							if (response.success) {
+								Swal.fire('نجاح', response.message, 'success').then(function () {
+									location.reload();
+								});
+							} else {
+								Swal.fire('خطأ', response.message, 'error');
+							}
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+							var errors = "";
+							var responseErrors = jqXHR.responseJSON;
+							if (responseErrors) {
+								$.each(responseErrors, function (key, value) {
+									errors += value.join("<br/>") + "<br/>";
+								});
+							} else {
+								errors = errorThrown;
+							}
+							Swal.fire('خطأ', errors, 'error');
+						}
+					});
+				});
+
+				// Handler for the Min button (gets record with minimum code)
+							$("#btnMin").click(async function () {
+			try {
+			const response = await $.ajax({
+			type: "GET",
+			url: '@Url.Action("GetMinReceipt", "Receipt")',
+			dataType: "json"
+			});
+
+
+				if (response) {
+					// تعبئة الحقول
+					console.log(response)
+					$("#ReceiptId").val(response.id);
+					$("#ReceiptCodeInput").val(response.code);
+					$("#DateReceipt").val(response.dateReceipt);
+					$("#ClientId").val(response.clientId);
+					$("#amount").val(response.amount);
+					$("#breakdown").val(response.amountName);
+					$("#paymentMethod").val(response.paymentId);
+					$("#purpose").val(response.purpose);
+					$("#chequeNumber").val(response.chequeNumber);
+					$("#chequeDate").val(response.chequeDate);
+					$("#bankName").val(response.bankName);
+					$("#DesignType").val(response.designType);
+					$("#DesignNumber").val(response.designNumber);
+					$("#ProjectNumber").val(response.projectNumber);
+					$("#ProjectName").val(response.projectName);
+
+					// الصورة
+							
+
+				} else {
+					Swal.fire("خطأ", "لم يتم العثور على أي بيانات.", "error");
+				}
+			} catch (error) {
+				console.error("Error fetching min Receipt:", error);
+				Swal.fire("خطأ", "حدث خطأ أثناء جلب البيانات.", "error");
+			}
+			}); // <-- THIS was missing				// Handler for the Max button (gets record with maximum code)
+							$("#btnMax").click(async function () {
+			try {
+			const response = await $.ajax({
+			type: "GET",
+			url: '@Url.Action("GetMaxReceipt", "Receipt")',
+			dataType: "json"
+			});
+
+
+				if (response) {
+					console.log(response);
+
+					// تعبئة الحقول
+					$("#ReceiptId").val(response.id);
+					$("#ReceiptCodeInput").val(response.code);
+					$("#DateReceipt").val(response.dateReceipt);
+					$("#ClientId").val(response.clientId);
+					$("#amount").val(response.amount);
+					$("#breakdown").val(response.amountName);
+					$("#paymentMethod").val(response.paymentId);
+					$("#purpose").val(response.purpose);
+					$("#chequeNumber").val(response.chequeNumber);
+					$("#chequeDate").val(response.chequeDate);
+					$("#bankName").val(response.bankName);
+					$("#DesignType").val(response.designType);
+					$("#DesignNumber").val(response.designNumber);
+					$("#ProjectNumber").val(response.projectNumber);
+					$("#ProjectName").val(response.projectName);
+
+
+				
+				}
+				else {
+					Swal.fire("خطأ", "لم يتم العثور على بيانات.", "error");
+				}
+			} catch (error) {
+				console.error("Error fetching max Receipt:", error);
+				Swal.fire("خطأ", "حدث خطأ أثناء جلب البيانات.", "error");
+			}
+			}); // <-- THIS was missing
+				// Handler for the Previous button
+				$("#btnPrevious").click(async function () {
+					const ReceiptId =$("#ReceiptId").val();
+					// console.log(ReceiptId);
+
+					// console.log(typeof(+ReceiptId));
+					// if (+ReceiptId!==0) {
+					//     Swal.fire("تنبيه", "Please select a record first.", "warning");
+					//     return;
+					// }
+					try {
+						const response = await $.ajax({
+							type: "GET",
+							url: '@Url.Action("GetPreviousReceipt", "Receipt", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", +ReceiptId),
+							dataType: "json"
+						});
+									if (response) {
+								console.log(response);
+
+							$("#ReceiptId").val(response.id);
+					$("#ReceiptCodeInput").val(response.code);
+					$("#DateReceipt").val(response.dateReceipt);
+					$("#ClientId").val(response.clientId);
+					$("#amount").val(response.amount);
+					$("#breakdown").val(response.amountName);
+					$("#paymentMethod").val(response.paymentId);
+					$("#purpose").val(response.purpose);
+					$("#chequeNumber").val(response.chequeNumber);
+					$("#chequeDate").val(response.chequeDate);
+					$("#bankName").val(response.bankName);
+					$("#DesignType").val(response.designType);
+					$("#DesignNumber").val(response.designNumber);
+					$("#ProjectNumber").val(response.projectNumber);
+					$("#ProjectName").val(response.projectName);
+
+
+
+							}
+									else {
+							Swal.fire("تنبيه", "No previous record found.", "info");
+						}
+					} catch (error) {
+						 // If the status code is 404, display a specific warning message.
+			if (error.status == 404) {
+				Swal.fire("تنبيه", "لا يوجد القضية قبل تلك", "info");
+			} else {
+				console.error("Error fetching previous Receipt:", error);
+				Swal.fire("خطأ", "Error fetching data.", "error");
+			}
+					}
+				});
+
+				// Handler for the Next button
+				$("#btnNext").click(async function () {
+					const ReceiptId =parseInt( $("#ReceiptId").val());
+					// console.log(ReceiptId);
+					// console.log(typeof(ReceiptId));
+					// if (+ReceiptId!==0) {
+					//     Swal.fire("تنبيه", "Please select a record first.", "warning");
+					//     return;
+					// }
+					try {
+						const response = await $.ajax({
+							type: "GET",
+							url: '@Url.Action("GetNextReceipt", "Receipt", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", +ReceiptId),
+							dataType: "json"
+						});
+									if (response) {
+								console.log(response);
+
+								// تعبئة الحقول
+								$("#ReceiptId").val(response.id);
+					$("#ReceiptCodeInput").val(response.code);
+					$("#DateReceipt").val(response.dateReceipt);
+					$("#ClientId").val(response.clientId);
+					$("#amount").val(response.amount);
+					$("#breakdown").val(response.amountName);
+					$("#paymentMethod").val(response.paymentId);
+					$("#purpose").val(response.purpose);
+					$("#chequeNumber").val(response.chequeNumber);
+					$("#chequeDate").val(response.chequeDate);
+					$("#bankName").val(response.bankName);
+					$("#DesignType").val(response.designType);
+					$("#DesignNumber").val(response.designNumber);
+					$("#ProjectNumber").val(response.projectNumber);
+					$("#ProjectName").val(response.projectName);
+
+
+
+							}
+									else {
+							Swal.fire("تنبيه", "No next record found.", "info");
+						}
+					} catch (error) {
+						// If the status code is 404, display a specific warning message.
+			if (error.status == 404) {
+				Swal.fire("تنبيه", "لا يوجد القضية بعد تلك.", "info");
+			} else {
+				console.error("Error fetching previous Receipt:", error);
+				Swal.fire("خطأ", "Error fetching data.", "error");
+			}
+					}
+				});
+			});
+</script>
+}

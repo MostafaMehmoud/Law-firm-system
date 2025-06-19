@@ -1,0 +1,396 @@
+﻿@using Law.CORE.ViewModels
+
+@model UpdateCenter
+
+
+<style>
+    .custom-input {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .custom-button {
+        margin: 0.2rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .custom-form-group {
+        margin-bottom: 0.4rem;
+    }
+
+    .card-header {
+        padding: 0.5rem 1rem;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .form-control-sm {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="d-flex m-3 justify-content-between">
+            <div class="m-0">
+                <h1 class="card-title text-dark font-weight-bold fs-2">الدوائر</h1>
+            </div>
+
+            <div class="d-flex justify-content-end navigation-buttons">
+                <div class="btn btn-primary btn-sm custom-button" id="btnMin">
+                    <i class="fa fa-angle-double-right"></i>
+                </div>
+                <div class="btn btn-primary btn-sm custom-button" id="btnPrevious">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+                <div class="btn btn-primary btn-sm custom-button" id="btnNext">
+                    <i class="fa fa-angle-left"></i>
+                </div>
+                <div class="btn btn-primary btn-sm custom-button" id="btnMax">
+                    <i class="fa fa-angle-double-left"></i>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+        <div class="card-body">
+            <form id="CenterForm" class="forms-sample">
+                <!-- Hidden field for ID -->
+                <input type="hidden" id="CenterId" asp-for="Id" />
+                <!-- صفوف الحقول -->
+                <div class="row row-cols-3 g-2">
+                    <div class="col-2">
+                        <label class="form-label">كود </label>
+                        <input id="CenterCodeInput" disabled type="number" class="form-control form-control-sm" placeholder="ادخل كود الدائرة">
+                    </div>
+                    <div class="col-5">
+                        <label class="form-label">مسمي الدائرة</label>
+                        <input id="CenterNameInput" type="text" class="form-control form-control-sm" placeholder="ادخل مسمي القضية">
+                    </div>
+                    <div class="col-5">
+                        <label class="form-label">المحكمة </label>
+                        <select id="courtId" asp-items="ViewBag.listCourts" class="form-control form-control-sm">
+                            <option value="0">اختر المحكمة</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group custom-form-group">
+
+                    <button type="button" class="btn btn-success btn-sm custom-button" id="btnAdd">حفظ</button>
+
+                    <button type="button" class="btn btn-secondary btn-sm custom-button" id="btnEdit">تعديل</button>
+                    <button type="button" class="btn btn-danger btn-sm custom-button" id="btnDelete">حذف</button>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- SweetAlert2 for alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            // On page load, get the next available code from the server
+            $.ajax({
+                url: '@Url.Action("GetNextCenterCode", "Center")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    $('#CenterCodeInput').val(response.nextCode);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error retrieving the next code:", errorThrown);
+                }
+            });
+                    $("#btnDelete").click(function () {
+            // Get the record's ID from a hidden field or another element
+            var id = $("#CenterId").val();
+            if (!id) {
+                Swal.fire("تنبيه", "Please select a record first.", "warning");
+                return;
+            }
+
+            // Show confirmation dialog
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "لن تتمكن من التراجع عن هذا الإجراء!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'نعم، احذفها!',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If confirmed, send the delete request
+                    $.ajax({
+                        url: '@Url.Action("DeleteCenter", "Center")',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function (response) {
+                            // Assuming your API returns a success message (you can modify as needed)
+                            Swal.fire("تم الحذف!", response.success, "success").then(function () {
+                                location.reload();
+                            });
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            Swal.fire("خطأ", "Error deleting data: " + errorThrown, "error");
+                        }
+                    });
+                }
+            });
+        });
+
+            // Handler for the Add button
+            $("#btnAdd").click(function () {
+                var code =parseInt( $('#CenterCodeInput').val());
+                var name = $('#CenterNameInput').val();
+                var courtId=parseInt($('#courtId').val());
+                var errors = "";
+
+                // Client-side validation
+                if (courtId === 0) {
+                    errors += "رجا اختر المحكمة  <br/>";
+                }
+                 if (!name || name.trim() === "") {
+                    errors += "اسم القضية مطلوب<br/>";
+                }
+                if (name && name.length > 100) {
+                    errors += "لا يمكن أن يتجاوز الاسم 100 حرف<br/>";
+                }
+                if (errors !== "") {
+                    Swal.fire('خطأ', errors, 'error');
+                    return; // Stop processing if validation fails
+                }
+
+                var CenterData = {
+                    Code: code,
+                    Name: name,
+                    CourtId:courtId
+
+                };
+
+                // AJAX call for AddCenter
+                $.ajax({
+                    url: '@Url.Action("AddCenter", "Center")',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8', // Ensure server accepts JSON
+                    data: JSON.stringify(CenterData),
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('نجاح', response.message, 'success').then(function () {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('خطأ', response.message, 'error');
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        var errors = "";
+                        var responseErrors = jqXHR.responseJSON;
+                        if (responseErrors) {
+                            $.each(responseErrors, function (key, value) {
+                                errors += value.join("<br/>") + "<br/>";
+                            });
+                        } else {
+                            errors = errorThrown;
+                        }
+                        Swal.fire('خطأ', errors, 'error');
+                    }
+                });
+            });
+
+            // Handler for the Edit button
+            $("#btnEdit").click(function () {
+                var id =parseInt($("#CenterId").val());
+                var code =parseInt( $('#CenterCodeInput').val());
+                var name = $('#CenterNameInput').val();
+                var courtId=parseInt($('#courtId').val());
+                var errors = "";
+
+                // Client-side validation
+                if (courtId === 0) {
+                    errors += "رجا اختر المحكمة  <br/>";
+                }
+                 if (!name || name.trim() === "") {
+                    errors += "اسم الدائرة مطلوب<br/>";
+                }
+                if (name && name.length > 100) {
+                    errors += "لا يمكن أن يتجاوز الاسم 100 حرف<br/>";
+                }
+                if (errors !== "") {
+                    Swal.fire('خطأ', errors, 'error');
+                    return; // Stop processing if validation fails
+                }
+
+                var CenterData = {
+                    Id:id,
+                    Code: code,
+                    Name: name,
+                    CourtId:courtId
+
+                };
+
+                // AJAX call for EditCenter
+                $.ajax({
+                    url: '@Url.Action("EditCenter", "Center")',
+                    type: 'POST',
+                    data: JSON.stringify(CenterData),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('نجاح', response.message, 'success').then(function () {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('خطأ', response.message, 'error');
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        var errors = "";
+                        var responseErrors = jqXHR.responseJSON;
+                        if (responseErrors) {
+                            $.each(responseErrors, function (key, value) {
+                                errors += value.join("<br/>") + "<br/>";
+                            });
+                        } else {
+                            errors = errorThrown;
+                        }
+                        Swal.fire('خطأ', errors, 'error');
+                    }
+                });
+            });
+
+            // Handler for the Min button (gets record with minimum code)
+            $("#btnMin").click(async function () {
+                try {
+                    const response = await $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("GetMinCenter", "Center")',
+                        dataType: "json"
+                    });
+                    if (response) {
+                        console.log(response)
+                        $("#CenterId").val(response.id);
+                        $("#CenterCodeInput").val(response.code);
+                        $("#CenterNameInput").val(response.name);
+                        $("#courtId").val(response.courtId);
+                    } else {
+                        Swal.fire("خطأ", "No records found.", "error");
+                    }
+                } catch (error) {
+                    console.error("Error fetching min Center:", error);
+                    Swal.fire("خطأ", "Error fetching data.", "error");
+                }
+            });
+
+            // Handler for the Max button (gets record with maximum code)
+            $("#btnMax").click(async function () {
+                try {
+                    const response = await $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("GetMaxCenter", "Center")',
+                        dataType: "json"
+                    });
+                    if (response) {
+                        console.log(response)
+                        $("#CenterId").val(response.id);
+                        $("#CenterCodeInput").val(response.code);
+                        $("#CenterNameInput").val(response.name);
+                        $("#courtId").val(response.courtId);
+                    } else {
+                        Swal.fire("خطأ", "No records found.", "error");
+                    }
+                } catch (error) {
+                    console.error("Error fetching max Center:", error);
+                    Swal.fire("خطأ", "Error fetching data.", "error");
+                }
+            });
+
+            // Handler for the Previous button
+            $("#btnPrevious").click(async function () {
+                const CenterId =$("#CenterId").val();
+                // console.log(CenterId);
+
+                // console.log(typeof(+CenterId));
+                // if (+CenterId!==0) {
+                //     Swal.fire("تنبيه", "Please select a record first.", "warning");
+                //     return;
+                // }
+                try {
+                    const response = await $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("GetPreviousCenter", "Center", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", +CenterId),
+                        dataType: "json"
+                    });
+                    if (response) {
+                        console.log(response)
+                        $("#CenterId").val(response.id);
+                        $("#CenterCodeInput").val(response.code);
+                        $("#CenterNameInput").val(response.name);
+                        $("#courtId").val(response.courtId);
+                    } else {
+                        Swal.fire("تنبيه", "No previous record found.", "info");
+                    }
+                } catch (error) {
+                     // If the status code is 404, display a specific warning message.
+        if (error.status == 404) {
+            Swal.fire("تنبيه", "لا يوجد القضية قبل تلك", "info");
+        } else {
+            console.error("Error fetching previous Center:", error);
+            Swal.fire("خطأ", "Error fetching data.", "error");
+        }
+                }
+            });
+
+            // Handler for the Next button
+            $("#btnNext").click(async function () {
+                const CenterId =parseInt( $("#CenterId").val());
+                // console.log(CenterId);
+                // console.log(typeof(CenterId));
+                // if (+CenterId!==0) {
+                //     Swal.fire("تنبيه", "Please select a record first.", "warning");
+                //     return;
+                // }
+                try {
+                    const response = await $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("GetNextCenter", "Center", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", +CenterId),
+                        dataType: "json"
+                    });
+                    if (response) {
+
+                        console.log(response)
+                        $("#CenterId").val(response.id);
+                        $("#CenterCodeInput").val(response.code);
+                        $("#CenterNameInput").val(response.name);
+                        $("#courtId").val(response.courtId);
+                    } else {
+                        Swal.fire("تنبيه", "No next record found.", "info");
+                    }
+                } catch (error) {
+                    // If the status code is 404, display a specific warning message.
+        if (error.status == 404) {
+            Swal.fire("تنبيه", "لا يوجد القضية بعد تلك.", "info");
+        } else {
+            console.error("Error fetching previous Center:", error);
+            Swal.fire("خطأ", "Error fetching data.", "error");
+        }
+                }
+            });
+        });
+    </script>
+}

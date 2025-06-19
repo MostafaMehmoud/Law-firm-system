@@ -1,0 +1,66 @@
+﻿@model Law.CORE.ViewModels.PrintPaymentDto
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <title>سند صرف</title>
+    <style>
+        body {
+            font-family: 'Arial';
+            direction: rtl;
+        }
+
+        .receipt-container {
+            width: 700px;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .field {
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body onload="window.print()">
+
+    <div class="receipt-container">
+        <div class="title">سند صرف</div>
+
+        <div class="field"><span class="label">رقم السند:</span> @Model.Code</div>
+        <div class="field"><span class="label">تاريخ السند:</span> @Model.DatePayment</div>
+        <div class="field"><span class="label">اسم الموكل:</span> @ViewBag.ClientName</div>
+        <div class="field"><span class="label">المبلغ:</span> @Model.Amount</div>
+        <div class="field"><span class="label">تفنيد المبلغ:</span> @Model.AmountName</div>
+        <div class="field">
+            <span class="label">طريقة الدفع:</span>
+            @Model.PaymentName 
+        </div>
+        @if (Model.PaymentId == 1)
+        {
+            <div class="field"><span class="label">رقم الشيك:</span> @Model.ChequeNumber</div>
+            <div class="field"><span class="label">تاريخ الشيك:</span> @Model.ChequeDate</div>
+            <div class="field"><span class="label">اسم البنك:</span> @Model.BankName</div>
+        }
+        <div class="field"><span class="label">وذلك لـ:</span> @Model.Purpose</div>
+        <div class="field"><span class="label">نوع التصميم:</span> @Model.MoneyTypeName</div>
+        <div class="field"><span class="label">رقم المشروع:</span> @Model.ProjectNumber</div>
+        <div class="field"><span class="label">اسم المخطط:</span> @Model.ProjectName</div>
+    </div>
+
+</body>
+</html>
