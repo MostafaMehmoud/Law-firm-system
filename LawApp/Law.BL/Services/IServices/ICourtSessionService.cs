@@ -21,5 +21,7 @@ namespace Law.BL.Services.IServices
         Task<CourtSessionDto> GetMinCourtSession();
         Task<CourtSessionDto> GetMaxCourtSession();
         int GetMaxCourtSessionId();
+        
+
     }
 }

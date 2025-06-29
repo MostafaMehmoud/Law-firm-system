@@ -1,0 +1,58 @@
+﻿@using Law.CORE.Entities
+@using Law.CORE.ViewModels
+@using Microsoft.AspNetCore.Identity
+@model List<CaseViewModel>
+@{
+    ViewData["Title"] = "جميع القضايا";
+}
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+<h2 class="mb-4">📁 جميع القضايا المتاحة</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>عنوان القضية</th>
+            <th>الوصف</th>
+            <th>تاريخ الإضافة</th>
+            <th>الإجراء</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Description</td>
+                <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @if (currentUser != null && currentUser.CanAccessUsersFile)
+                    {
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد من حذف هذه القضية؟')">
+                                🗑️ حذف
+                            </button>
+                        </form>
+                    }
+
+                    @if (!item.HasSubmittedOffer)
+                    {
+                        <a asp-controller="Offer" asp-action="SubmitOffer" asp-route-caseId="@item.Id"
+                           class="btn btn-sm btn-success">
+                            ➕ تقديم عرض
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Offer" asp-action="EditOffer" asp-route-caseId="@item.Id"
+                           class="btn btn-sm btn-warning">
+                            ✏️ تعديل العرض
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

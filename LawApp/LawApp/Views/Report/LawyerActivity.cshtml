@@ -1,0 +1,56 @@
+﻿@using Law.CORE.ViewModels
+@model List<AdminLawyerActivityViewModel>
+@{
+    ViewData["Title"] = "نشاط المحامين";
+}
+<style>
+    .table-sm th,
+    .table-sm td {
+        padding: 0.4rem !important;
+        font-size: 0.85rem;
+        vertical-align: middle;
+    }
+</style>
+
+<h3 class="mb-4">📊 جميع آراء وعروض المحامين</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">لا توجد بيانات لعرضها.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped table-hover table-sm">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 120px;">المحامي</th>
+                <th style="width: 150px;">القضية</th>
+                <th style="width: 100px;">الهاتف</th>
+                <th style="width: 100px;">المكتب</th>
+                <th style="width: 200px;">الحل المقترح</th>
+                <th style="width: 80px;">الأتعاب</th>
+                <th style="width: 130px;">تاريخ العرض</th>
+                <th style="width: 200px;">الرأي</th>
+                <th style="width: 130px;">تاريخ الرأي</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.LawyerName</td>
+                    <td>@item.CaseTitle</td>
+                    <td>@item.OfferPhoneNumber</td>
+                    <td>@item.OfferOfficeNumber</td>
+                    <td>@item.ProposedSolution</td>
+                    <td>@(item.ProposedFees?.ToString("N0") ?? "—")</td>
+                    <td>@(item.OfferSubmittedAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                    <td>@item.OpinionComment</td>
+                    <td>@(item.OpinionPostedAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+}

@@ -1,0 +1,54 @@
+﻿@using Law.CORE.ViewModels
+
+@model LoginViewModel
+
+<h2>تسجيل الدخول</h2>
+
+<form method="post" asp-action="Login">
+    @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Display ModelState Errors -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <!-- Username Field -->
+    <div class="form-group">
+        <label asp-for="Username">اسم المستخدم</label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group">
+        <label asp-for="Password">كلمة السر</label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-group">
+        <input type="submit" value="تسجيل الدخول" class="btn btn-primary" />
+    </div>
+
+    <!-- Forgot Password Link -->
+    <div class="form-group">
+        <a href="/Users/ForgotPassword">هل نسيت كلمة السر؟</a>
+    </div>
+    <div class="form-group">
+        <a href="/Users/Register">تسجيل حساب جديد </a>
+    </div>
+</form>

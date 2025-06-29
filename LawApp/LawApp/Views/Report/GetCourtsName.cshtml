@@ -1,0 +1,150 @@
+﻿<style>
+    /* تقليل حجم المدخلات */
+    .custom-input {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    /* تقليل الهوامش بين الحقول */
+    .custom-form-group {
+        margin-bottom: 0.5rem;
+    }
+
+    /* تقليل الهوامش حول الأزرار */
+    .custom-button {
+        margin: 0.2rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+
+    @@media print {
+        body {
+            font-size: 14px;
+            direction: rtl;
+            text-align: right;
+        }
+    }
+
+</style>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="d-flex justify-content-between">
+            <div class="m-0">
+                <h1 class="card-title text-dark font-weight-bold fs-2"> تقرير  المحاكم </h1>
+            </div>
+
+        </div>
+
+        <div class="card-body">
+            <form id="Form" class="forms-sample">
+                <!-- Static Fields -->
+                <!-- Additional Static Fields e.g., Books Fee, Registration Fee, Uniform Fee -->
+               
+                <div class="form-group">
+                    <button type="button" id="btnData" class="btn btn-success btn-sm custom-button">معاينة</button>
+                </div>
+            </form>
+            <table id="Table" class="display">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th> رقم المحكمة </th>
+                        <th>اسم المحكمة </th>
+                        
+                        <th>جوال </th>
+                        <th>المسؤل </th>
+
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @*  @foreach (var bus in Model)
+                    {
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+
+                        </tr>
+                    } *@
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Include DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <script>
+        let table;
+        $(document).ready(function () {
+            table = $('#Table').DataTable({
+                dom: 'Bfrtip',
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/ar.json"
+                },
+                columns: [
+                    { data: 'index' },
+                    { data: 'id' },
+                    { data: 'name' },
+                    { data: 'phone' },
+                    { data: 'responsible' }
+                ],
+                buttons: [
+                    {
+                        extend: 'print',
+                        text: 'طباعة الجدول',
+                        title: 'قائمة بأسماء المحاكم',
+                        customize: function (win) {
+                            $(win.document.body).css({
+                                'font-size': '14px',
+                                'direction': 'rtl',
+                                'text-align': 'right'
+                            });
+
+                            $(win.document.body).find('h1').css({
+                                'text-align': 'center',
+                                'font-size': '20px',
+                                'font-weight': 'bold',
+                                'margin-bottom': '20px'
+                            });
+                        }
+                    }
+                ],
+                data: []
+            });
+
+            $('#btnData').click(function () {
+                $.ajax({
+                    url: '/Report/GetCourtsReport',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        table.clear().rows.add(data).draw();
+                    },
+                    error: function () {
+                        alert('حدث خطأ أثناء تحميل البيانات');
+                    }
+                });
+            });
+        });
+    </script>
+
+
+}

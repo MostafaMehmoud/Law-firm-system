@@ -1,0 +1,85 @@
+﻿@using Law.CORE.ViewModels
+@model CaseDetailViewModel
+@using System.Security.Claims
+@{
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+<h4 class="mt-4 mb-3">💬 آراء المحامين حول هذه القضية</h4>
+
+@if (Model.Opinions != null && Model.Opinions.Any())
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>اسم المحامي</th>
+                <th>الرأي</th>
+                <th>تاريخ الإرسال</th>
+                <th>الإجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var opinion in Model.Opinions)
+            {
+                <tr>
+                    <td>@opinion.LawyerName</td>
+                    <td>@opinion.Comment</td>
+                    <td>@opinion.PostedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (opinion.UserId == currentUserId)
+                        {
+                            <a asp-controller="Opinion" asp-action="EditOpinion" asp-route-id="@opinion.Id"
+                               class="btn btn-sm btn-warning me-1">✏️ تعديل</a>
+
+                            <a asp-controller="Opinion" asp-action="DeleteOpinion" asp-route-id="@opinion.Id"
+                               class="btn btn-sm btn-danger delete-opinion">🗑️ حذف</a>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <div class="alert alert-info">لا توجد آراء حتى الآن لهذه القضية.</div>
+}
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(".delete-opinion").click(function (e) {
+            e.preventDefault();
+            const url = $(this).attr("href");
+
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "لا يمكنك التراجع بعد الحذف!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'نعم، احذف'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // إنشاء نموذج وإرساله كـ POST
+                    const form = $('<form method="post" action="' + url + '">');
+                    form.append('@Html.AntiForgeryToken()');
+                    $('body').append(form);
+                    form.submit();
+                }
+            });
+        });
+
+        @if (TempData["Success"] != null)
+        {
+            <text>Swal.fire('تم', '@TempData["Success"]', 'success');</text>
+        }
+        else if (TempData["Error"] != null)
+        {
+            <text>Swal.fire('خطأ', '@TempData["Error"]', 'error');</text>
+        }
+    </script>
+}

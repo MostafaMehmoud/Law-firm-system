@@ -1,0 +1,29 @@
+﻿@using Law.CORE.ViewModels
+@model AddOpinionViewModel
+
+<h3>إضافة رأي حول القضية</h3>
+
+<form asp-action="AddOpinion" method="post">
+    <input type="hidden" asp-for="CaseId" />
+
+    <div class="form-group">
+        <label>رأيك</label>
+        <textarea asp-for="Comment" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">إرسال</button>
+</form>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["Success"] != null)
+        {
+            <text>Swal.fire('تم بنجاح', '@TempData["Success"]', 'success');</text>
+        }
+        else if (TempData["Error"] != null)
+        {
+            <text>Swal.fire('تنبيه', '@TempData["Error"]', 'warning');</text>
+        }
+    </script>
+}

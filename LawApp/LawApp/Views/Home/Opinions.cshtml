@@ -1,0 +1,26 @@
+﻿@using Law.CORE.ViewModels
+@model List<OpinionDisplayViewModel>
+
+<h3>آراء المحامين حول القضايا</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>اسم القضية</th>
+            <th>اسم المحامي</th>
+            <th>الرأي</th>
+            <th>تاريخ الإرسال</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var opinion in Model)
+        {
+            <tr>
+                <td>@opinion.CaseTitle</td>
+                <td>@opinion.LawyerName</td>
+                <td>@opinion.Comment</td>
+                <td>@opinion.PostedAt.ToString("yyyy-MM-dd HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>

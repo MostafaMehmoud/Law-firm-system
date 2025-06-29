@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Law.CORE.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace Law.DAL.Data
 {
-    public class LawAppDbContext:DbContext
+    public class LawAppDbContext:IdentityDbContext<ApplicationUser>
     {
         public DbSet<Issue> issues {  get; set; }
         public DbSet<Court> courts { get; set; }
@@ -18,10 +21,13 @@ namespace Law.DAL.Data
         public DbSet<IssueFile> issuesFiles { get; set; }
         public DbSet<CourtSession> courtsSessions { get; set; }
         public DbSet<Receipt> receipts { get; set; }
-        public DbSet<Payment> payments { get; set; }    
-        public LawAppDbContext(DbContextOptions<LawAppDbContext> options):base(options) 
+        public DbSet<Payment> payments { get; set; }
+        public DbSet<Case> cases { get; set; }  
+        public DbSet<Offer> offers { get; set; }    
+        public DbSet<Opinion> opinsion { get; set; }    
+        public LawAppDbContext(DbContextOptions<LawAppDbContext> options)
+         : base(options)
         {
-            
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +57,9 @@ namespace Law.DAL.Data
  .IsUnique();
             modelBuilder.Entity<Payment>()
       .HasIndex(n => n.Code)
+.IsUnique();
+            modelBuilder.Entity<ApplicationUser>()
+     .HasIndex(n => n.UserNumber)
 .IsUnique();
             base.OnModelCreating(modelBuilder);
         }

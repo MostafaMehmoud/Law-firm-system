@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Law.CORE.Entities;
 using Law.DAL.Data;
 using Law.DAL.Repository.IRepository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Law.DAL.Repository
@@ -24,15 +25,26 @@ namespace Law.DAL.Repository
         public IRepositorySpecial<Party> parties { get; }
 
         public IRepositorySpecial<IssueFile> issuesFile { get; }
-
+        public IRepositoryAuth auth { get; }
         public IRepositorySpecial<CourtSession> courtsSession { get; }
         public IRepositorySpecial<Receipt> receipts { get; }
 
         public IRepositorySpecial<Payment> payments { get; }
+        public ICaseRepository cases { get; }
+
+        public IOfferRepository OfferRepository { get; }
+
+        public IOpinionRepository OpinionRepository { get; }
 
         public int Complete() => _context.SaveChanges();
         public void Dispose() => _context.Dispose();
-        public UnitOfWork(LawAppDbContext context)
+       
+              public UnitOfWork(
+        LawAppDbContext context,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+          RoleManager<IdentityRole> roleManager
+    )
         {
             _context = context;
             issues=new RepositoryIssues(_context);
@@ -44,6 +56,11 @@ namespace Law.DAL.Repository
             courtsSession=new RepositoryCourtSession(_context);
             receipts=new RepositoryReceipt(_context);
             payments = new RepositoryPayment(_context);
+            auth = new RepositoryAuth(userManager, signInManager);
+            cases = new RepositoryCase(_context);
+            OfferRepository = new OfferRepository(_context);
+            OpinionRepository= new OpinionRepository(_context); 
+
         }
         public void Save()
         {

@@ -1,0 +1,35 @@
+﻿@using Law.CORE.ViewModels
+@model OpinionEditViewModel
+
+@{
+    ViewData["Title"] = "تعديل الرأي";
+}
+
+<h3>✏️ تعديل رأيك</h3>
+
+<form asp-action="EditOpinion" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CaseId" />
+
+    <div class="form-group">
+        <label asp-for="Comment"></label>
+        <textarea asp-for="Comment" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">💾 حفظ التعديلات</button>
+    <a asp-controller="Case" asp-action="Details" asp-route-id="@Model.CaseId" class="btn btn-secondary mt-2">🔙 رجوع</a>
+</form>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["Success"] != null)
+        {
+            <text>Swal.fire('تم بنجاح', '@TempData["Success"]', 'success');</text>
+        }
+        else if (TempData["Error"] != null)
+        {
+            <text>Swal.fire('خطأ', '@TempData["Error"]', 'error');</text>
+        }
+    </script>
+}

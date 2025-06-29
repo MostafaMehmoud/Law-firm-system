@@ -1,0 +1,35 @@
+﻿@using Law.CORE.ViewModels
+@model SubmitOfferViewModel
+
+<h3>تقديم عرض للقضية</h3>
+
+<form asp-action="SubmitOffer" method="post">
+    <input type="hidden" asp-for="CaseId" />
+
+    <div class="form-group">
+        <label>اسم المحامي</label>
+        <input asp-for="LawyerName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>رقم الجوال</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>رقم المكتب</label>
+        <input asp-for="OfficeNumber" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>الحل المقترح</label>
+        <textarea asp-for="ProposedSolution" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>الأتعاب المقترحة</label>
+        <input asp-for="ProposedFees" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">إرسال العرض</button>
+</form>

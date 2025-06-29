@@ -1,0 +1,41 @@
+﻿@using Law.CORE.ViewModels
+@model List<UserOfferViewModel>
+@{
+    ViewData["Title"] = "عروضي المقدمة";
+}
+
+<h2>📨 العروض التي قدمتها</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>عنوان القضية</th>
+            <th>اسم المحامي</th>
+            <th>الهاتف</th>
+            <th>المكتب</th>
+            <th>الحل المقترح</th>
+            <th>الأتعاب</th>
+            <th>تاريخ التقديم</th>
+            <th>الإجراء</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var offer in Model)
+        {
+            <tr>
+                <td>@offer.CaseTitle</td>
+                <td>@offer.LawyerName</td>
+                <td>@offer.PhoneNumber</td>
+                <td>@offer.OfficeNumber</td>
+                <td>@offer.ProposedSolution</td>
+                <td>@offer.ProposedFees.ToString("C")</td>
+                <td>@offer.SubmittedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    <a asp-controller="Offer" asp-action="EditOffer" asp-route-id="@offer.OfferId" class="btn btn-warning btn-sm">
+                        ✏️ تعديل
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,5 +1,11 @@
-﻿@using Law.CORE.ViewModels
+﻿@using Law.CORE.Entities
+@using Law.CORE.ViewModels
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
 
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
 @model UpdateCourt
 
 
@@ -40,20 +46,28 @@
                 <h1 class="card-title text-dark font-weight-bold fs-2">المحاكم</h1>
             </div>
 
-            <div class="d-flex justify-content-end navigation-buttons">
-                <div class="btn btn-primary btn-sm custom-button" id="btnMin">
-                    <i class="fa fa-angle-double-right"></i>
+            @if (currentUser.Level == UserLevels.Admin || currentUser.Level == UserLevels.View || currentUser.Level == UserLevels.EditAdd)
+            {
+                <div class="d-flex justify-content-end navigation-buttons">
+                    <div class="btn btn-primary btn-sm custom-button" id="btnMin">
+                        <i class="fa fa-angle-double-right"></i>
+                    </div>
+                    <div class="btn btn-primary btn-sm custom-button" id="btnPrevious">
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                    <div class="btn btn-primary btn-sm custom-button" id="btnNext">
+                        <i class="fa fa-angle-left"></i>
+                    </div>
+                    <div class="btn btn-primary btn-sm custom-button" id="btnMax">
+                        <i class="fa fa-angle-double-left"></i>
+                    </div>
                 </div>
-                <div class="btn btn-primary btn-sm custom-button" id="btnPrevious">
-                    <i class="fa fa-angle-right"></i>
+            }
+            else
+            {
+                <div class="d-flex justify-content-end navigation-buttons">
                 </div>
-                <div class="btn btn-primary btn-sm custom-button" id="btnNext">
-                    <i class="fa fa-angle-left"></i>
-                </div>
-                <div class="btn btn-primary btn-sm custom-button" id="btnMax">
-                    <i class="fa fa-angle-double-left"></i>
-                </div>
-            </div>
+            }
 
 
 
@@ -92,13 +106,18 @@
                 </div>
                 <div class="form-group custom-form-group">
 
-                    <button type="button" class="btn btn-success btn-sm custom-button" id="btnAdd">حفظ</button>
-
-                    <button type="button" class="btn btn-secondary btn-sm custom-button" id="btnEdit">تعديل</button>
-                    <button type="button" class="btn btn-danger btn-sm custom-button" id="btnDelete">حذف</button>
-
-
+                    @if (currentUser.Level == UserLevels.Admin || currentUser.Level == UserLevels.Add || currentUser.Level == UserLevels.EditAdd)
+                    {
+                        <button type="button" class="btn btn-success btn-sm custom-button" id="btnAdd">حفظ</button>
+                    }
+                    @if (currentUser.Level == UserLevels.Admin || currentUser.Level == UserLevels.EditAdd)
+                    {
+                        <button type="button" class="btn btn-secondary btn-sm custom-button" id="btnEdit">تعديل</button>
+                        <button type="button" class="btn btn-danger btn-sm custom-button" id="btnDelete">حذف</button>
+                    }
                 </div>
+
+             
             </form>
         </div>
     </div>

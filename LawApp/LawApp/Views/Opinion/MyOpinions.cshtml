@@ -1,0 +1,118 @@
+﻿@using Law.CORE.ViewModels
+@model List<OpinionDisplayViewModel>
+@{
+    ViewData["Title"] = "آرائي في القضايا";
+}
+
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
+<h3>آرائي في القضايا</h3>
+<div class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" id="searchCase" class="form-control" placeholder="🔍 ابحث باسم القضية..." />
+    </div>
+    <div class="col-md-3">
+        <input type="date" id="dateFrom" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <input type="date" id="dateTo" class="form-control" />
+    </div>
+</div>
+
+<table id="opinionsTable" class="table table-striped">
+    <thead>
+        <tr>
+            <th>اسم القضية</th>
+            <th>الرأي</th>
+            <th>تاريخ الإرسال</th>
+            <th>الإجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var opinion in Model)
+        {
+            <tr>
+                <td>@opinion.CaseTitle</td>
+                <td>@opinion.Comment</td>
+                <td data-date="@opinion.PostedAt.ToString("yyyy-MM-dd")">
+                    @opinion.PostedAt.ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    <a asp-action="EditOpinion" asp-route-id="@opinion.Id" class="btn btn-sm btn-warning">تعديل</a>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(@opinion.Id)">حذف</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<form id="deleteForm" method="post" asp-action="DeleteOpinion">
+    <input type="hidden" name="id" id="deleteId" />
+</form>
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#opinionsTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json"
+            }
+        });
+    });
+</script>
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "لن يمكنك التراجع بعد الحذف!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، احذفه!',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#deleteId').val(id);
+                    $('#deleteForm').submit();
+                }
+            });
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#opinionsTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json"
+                }
+            });
+
+            // فلترة حسب اسم القضية
+            $('#searchCase').on('keyup', function () {
+                table.column(0).search(this.value).draw();
+            });
+
+            // فلترة حسب التاريخ
+            $('#dateFrom, #dateTo').on('change', function () {
+                let fromDate = $('#dateFrom').val();
+                let toDate = $('#dateTo').val();
+
+                $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                    let date = data[2]; // تاريخ الإرسال (العمود الثالث)
+                    let rowDate = new Date(date);
+
+                    if (fromDate && rowDate < new Date(fromDate)) return false;
+                    if (toDate && rowDate > new Date(toDate)) return false;
+
+                    return true;
+                });
+
+                table.draw();
+                $.fn.dataTable.ext.search.pop(); // إزالة الفلتر بعد التحديث
+            });
+        });
+    </script>
+
+}

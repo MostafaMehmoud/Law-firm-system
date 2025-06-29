@@ -1,0 +1,219 @@
+﻿<style>
+    /* تقليل حجم المدخلات */
+    .custom-input {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    /* تقليل الهوامش بين الحقول */
+    .custom-form-group {
+        margin-bottom: 0.5rem;
+    }
+
+    /* تقليل الهوامش حول الأزرار */
+    .custom-button {
+        margin: 0.2rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+
+    @@media print {
+        body {
+            font-size: 14px;
+            direction: rtl;
+            text-align: right;
+        }
+    }
+
+</style>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="d-flex justify-content-between">
+            <div class="m-0">
+                <h1 class="card-title text-dark font-weight-bold fs-2"> تقرير القضايا   </h1>
+            </div>
+
+        </div>
+
+        <div class="card-body">
+            <form id="Form" class="forms-sample">
+                <!-- Static Fields -->
+                <!-- Additional Static Fields e.g., Books Fee, Registration Fee, Uniform Fee -->
+                <div class="row custom-form-group">
+                    <div class="col-md-6">
+                        <label class="fs-4"> من رقم الوكيل </label>
+                        <select asp-items="ViewBag.listClients" id="fromClient" class="form-control form-control-sm ">
+                            <option>اختر الوكيل</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fs-4"> الي رقم الوكيل </label>
+                        <select asp-items="ViewBag.listClients" id="toClient" class="form-control form-control-sm ">
+                            <option>اختر الوكيل</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row custom-form-group">
+                    <div class="col-md-6">
+                        <label class="fs-4"> من رقم القضية </label>
+                        <select asp-items="ViewBag.listIssueFiles" id="fromIssue" class="form-control form-control-sm ">
+                            <option>اختر القضية</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fs-4"> الي رقم القضية </label>
+                        <select asp-items="ViewBag.listIssueFiles" id="toIssue" class="form-control form-control-sm ">
+                            <option>اختر القضية</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row custom-form-group">
+                    <div class="col-md-6">
+                        <label class="fs-4">من تاريخ</label>
+                        <input id="fromDate" class="form-control form-control-sm" type="date" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fs-4">إلى تاريخ</label>
+                        <input id="toDate" class="form-control form-control-sm" type="date" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="btnData" class="btn btn-success btn-sm custom-button">معاينة</button>
+                </div>
+            </form>
+            <table id="Table" class="display">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th> قضية  </th>
+                        <th>تاريخ </th>
+                        <th>مسمي القضية   </th>
+                        <th>اسم الموكل </th>
+                        <th>اسم الخصم </th>
+                        <th>اسم المحكمة </th>
+                        <th>اسم الدائرة </th>
+                        <th>اسم القاضي </th>
+                        
+
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @*  @foreach (var bus in Model)
+                    {
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+
+                        </tr>
+                    } *@
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Include DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <script>
+                          let table;
+        $(document).ready(function () {
+            table = $('#Table').DataTable({
+                dom: 'Bfrtip',
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/ar.json"
+                },
+                columns: [
+                    { data: 'index' },
+                    { data: 'issueNumber' },
+                    { data: 'issueDate' },
+                    { data: 'issueTitle' },
+                    { data: 'clientName' },
+                    { data: 'partyName' },
+                    { data: 'courtName' },
+                    { data: 'circleName' },
+                    { data: 'judgeName' }
+                ],
+                buttons: [
+                    {
+                        extend: 'print',
+                        text: 'طباعة الجدول',
+                        title: 'قائمة بالقضايا',
+                        customize: function (win) {
+                            $(win.document.body).css({
+                                'font-size': '14px',
+                                'direction': 'rtl',
+                                'text-align': 'right'
+                            });
+                            $(win.document.body).find('h1').css({
+                                'text-align': 'center',
+                                'font-size': '20px',
+                                'font-weight': 'bold',
+                                'margin-bottom': '20px'
+                            });
+                        }
+                    }
+                ],
+                data: []
+            });
+
+            $('#btnData').click(function () {
+                var filter = {
+                    fromClientId: parseInt($('#fromClient').val()) || null,
+                    toClientId: parseInt($('#toClient').val()) || null,
+                    fromIssueId: parseInt($('#fromIssue').val()) || null,
+                    toIssueId: parseInt($('#toIssue').val()) || null,
+                    fromDate: $('#fromDate').val() || null,
+                    toDate: $('#toDate').val() || null
+                };
+
+                $.ajax({
+                    url: '/Report/GetIssuesReport',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(filter),
+                    success: function (data) {
+                        table.clear().rows.add(data).draw();
+                    },
+                    error: function () {
+                        alert('حدث خطأ أثناء تحميل البيانات');
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let today = new Date();
+            let lastYear = new Date();
+            lastYear.setFullYear(today.getFullYear() - 1);
+
+            // تحويل التاريخ إلى تنسيق YYYY-MM-DD
+            let todayStr = today.toISOString().split('T')[0];
+            let lastYearStr = lastYear.toISOString().split('T')[0];
+
+            // ضبط القيم الافتراضية
+            document.getElementById("fromDate").value = lastYearStr;
+            document.getElementById("toDate").value = todayStr;
+        });
+    </script>
+
+}

@@ -1,0 +1,20 @@
+﻿@using Law.CORE.ViewModels
+@model CaseViewModel
+
+<h3>إضافة قضية جديدة</h3>
+
+<form asp-action="Add" method="post">
+    <div class="form-group">
+        <label>عنوان القضية</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>وصف القضية</label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">حفظ</button>
+</form>

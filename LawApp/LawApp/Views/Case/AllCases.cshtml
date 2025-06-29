@@ -1,0 +1,44 @@
+﻿@using Law.CORE.ViewModels
+@model List<CaseWithOfferStatusViewModel>
+@{
+    ViewData["Title"] = "جميع القضايا";
+}
+
+<h2>📁 جميع القضايا المتاحة</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>عنوان القضية</th>
+            <th>تاريخ الإنشاء</th>
+            <th>الإجراء</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-controller="Opinion" asp-action="AddOpinion" asp-route-caseId="@item.CaseId" class="btn btn-outline-primary btn-sm">
+                        💬 إضافة رأي
+                    </a>
+
+                    @if (!item.HasUserSubmittedOffer)
+                    {
+                        <a asp-controller="Offer" asp-action="SubmitOffer" asp-route-caseId="@item.CaseId" class="btn btn-success btn-sm">
+                            ➕ تقديم عرض
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Offer" asp-action="EditOffer" asp-route-id="@item.OfferId" class="btn btn-warning btn-sm">
+                            ✏️ تعديل العرض
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

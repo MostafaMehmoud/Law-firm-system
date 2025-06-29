@@ -18,6 +18,11 @@ namespace Law.DAL.Repository.IRepository
         IRepositorySpecial<CourtSession> courtsSession { get; }
         IRepositorySpecial<Receipt> receipts { get; }   
         IRepositorySpecial<Payment> payments { get; }
+        IRepositoryAuth auth { get; }
+        ICaseRepository cases { get; }
+        IOfferRepository OfferRepository { get; }
+        IOpinionRepository OpinionRepository { get; }
+
         void Save();
         int Complete();
     }

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Law.CORE.Entities
+@using Microsoft.AspNetCore.Identity
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8" />
@@ -9,7 +11,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LawApp.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    
+
 
     <link href="~/css/bootstrap.css" rel="stylesheet" />
     <!-- Layout styles -->
@@ -23,7 +25,7 @@
         display: block;
         }
 
-      
+
         .content {
         margin-right: 250px;
         flex-grow: 1;
@@ -76,211 +78,230 @@
         color:white !important;
         }
         /*start  style sidebar */
-       /*  .sidebar {
-            width: 250px;
-            background: #318eeb;
-            color: white;
-            min-height: 100vh;
-            position: fixed;
-            top: 0;
-            right: 0;
-            padding: 20px 10px;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /*  .sidebar {
+        width: 250px;
+        background: #318eeb;
+        color: white;
+        min-height: 100vh;
+        position: fixed;
+        top: 0;
+        right: 0;
+        padding: 20px 10px;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-            .sidebar a {
-                display: flex;
-                align-items: center;
-                padding: 12px 15px;
-                color: white;
-                text-decoration: none;
-                font-size: 16px;
-                transition: background 0.3s, padding-right 0.3s;
-                border-radius: 8px;
-                margin-bottom: 5px;
-            }
+        .sidebar a {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: background 0.3s, padding-right 0.3s;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        }
 
-                .sidebar a i {
-                    margin-left: 10px;
-                    font-size: 18px;
-                }
+        .sidebar a i {
+        margin-left: 10px;
+        font-size: 18px;
+        }
 
-                .sidebar a:hover {
-                    background-color: rgba(255, 255, 255, 0.15);
-                    padding-right: 20px;
-                }
+        .sidebar a:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        padding-right: 20px;
+        }
 
         .submenu {
-            list-style: none;
-            padding-left: 20px;
-            margin-top: 5px;
-            display: none;
+        list-style: none;
+        padding-left: 20px;
+        margin-top: 5px;
+        display: none;
         }
 
-            .submenu li {
-                margin-bottom: 5px;
-            }
+        .submenu li {
+        margin-bottom: 5px;
+        }
 
-                .submenu li a {
-                    font-size: 14px;
-                    background-color: rgba(255, 255, 255, 0.1);
-                    padding: 8px 12px;
-                    display: block;
-                    border-radius: 6px;
-                    transition: background 0.3s;
-                }
+        .submenu li a {
+        font-size: 14px;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 8px 12px;
+        display: block;
+        border-radius: 6px;
+        transition: background 0.3s;
+        }
 
-                    .submenu li a:hover {
-                        background-color: rgba(255, 255, 255, 0.2);
-                    } */
-                    /* end style sidebar */
+        .submenu li a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        } */
+        /* end style sidebar */
         /* تهيئة عامة */
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            direction: rtl;
-            background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        direction: rtl;
+        background-color: #f5f5f5;
         }
 
         /* الشريط العلوي */
         .navbar {
-            background-color: #318eeb;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            height: 60px;
-            position: fixed;
-            top: 0;
-            right: 0;
-            left: 0;
-            z-index: 1000;
+        background-color: #318eeb;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 60px;
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 1000;
         }
 
-            .navbar .nav {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                gap: 15px;
-            }
+        .navbar .nav {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 15px;
+        }
 
-            .navbar .nav-item {
-                display: inline-block;
-            }
+        .navbar .nav-item {
+        display: inline-block;
+        }
 
-            .navbar .nav-link {
-                color: white;
-                text-decoration: none;
-                font-size: 16px;
-                padding: 8px 12px;
-                border-radius: 6px;
-                transition: background 0.3s;
-            }
+        .navbar .nav-link {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background 0.3s;
+        }
 
-                .navbar .nav-link:hover {
-                    background-color: rgba(255, 255, 255, 0.2);
-                }
+        .navbar .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        }
 
         /* الشريط الجانبي */
+        .sidebar {
+        width: 250px;
+        background: #318eeb;
+        color: white;
+        min-height: 100vh;
+        position: fixed;
+        top: 60px;
+        right: 0;
+        padding: 20px 10px;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
         .sidebar {
             width: 250px;
             background: #318eeb;
             color: white;
-            min-height: 100vh;
             position: fixed;
-            top: 60px;
+            top: 60px; /* أعلى الشريط الجانبي يبدأ بعد navbar */
             right: 0;
+            bottom: 0;
+            overflow-y: auto; /* التمرير العمودي عند الحاجة */
             padding: 20px 10px;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
         }
 
-            .sidebar a {
-                display: flex;
-                align-items: center;
-                padding: 12px 15px;
-                color: white;
-                text-decoration: none;
-                font-size: 15px;
-                transition: background 0.3s;
-                border-radius: 6px;
-                margin-bottom: 5px;
-            }
 
-                .sidebar a i {
-                    margin-left: 10px;
-                }
+        .sidebar a {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: white;
+        text-decoration: none;
+        font-size: 15px;
+        transition: background 0.3s;
+        border-radius: 6px;
+        margin-bottom: 5px;
+        }
 
-                .sidebar a:hover {
-                    background-color: rgba(255, 255, 255, 0.15);
-                }
+        .sidebar a i {
+        margin-left: 10px;
+        }
+
+        .sidebar a:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        }
 
         .submenu {
-            list-style: none;
-            padding-right: 20px;
-            margin-top: 5px;
-            display: none;
+        list-style: none;
+        padding-right: 20px;
+        margin-top: 5px;
+        display: none;
         }
 
-            .submenu li {
-                margin-bottom: 5px;
-            }
+        .submenu li {
+        margin-bottom: 5px;
+        }
 
-                .submenu li a {
-                    font-size: 14px;
-                    background-color: rgba(255, 255, 255, 0.1);
-                    padding: 8px 12px;
-                    display: block;
-                    border-radius: 6px;
-                }
+        .submenu li a {
+        font-size: 14px;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 8px 12px;
+        display: block;
+        border-radius: 6px;
+        }
 
-                    .submenu li a:hover {
-                        background-color: rgba(255, 255, 255, 0.2);
-                    }
+        .submenu li a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        }
 
         /* المحتوى الرئيسي */
         .content {
-            margin-right: 250px;
-            padding: 80px 20px 20px 20px;
+        margin-right: 250px;
+        padding: 80px 20px 20px 20px;
         }
 
         /* تحسين استايل الفورم */
         .custom-input,
         .form-control-sm {
-            font-size: 0.85rem;
-            padding: 0.25rem 0.5rem;
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
         }
 
         .custom-button {
-            margin: 0.2rem;
-            padding: 0.3rem 0.6rem;
-            font-size: 0.85rem;
+        margin: 0.2rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
         }
 
         .custom-form-group {
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
         }
 
         .card-header {
-            padding: 0.5rem 1rem;
+        padding: 0.5rem 1rem;
         }
 
         .form-label {
-            font-size: 0.85rem;
-            font-weight: 600;
+        font-size: 0.85rem;
+        font-weight: 600;
         }
+
+       
 
 
     </style>
 </head>
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
 <body>
     <div class="navbar">
         <ul class="nav">
-           @*  <li class="nav-item">
+            @*  <li class="nav-item">
                 <img src="~/images/download.jpg" alt="شعار مدرستي" style="height: 50px; border-radius: 50%; width: 50px;" />
             </li> *@
             @if (User.Identity.IsAuthenticated)
@@ -309,43 +330,183 @@
 
 
 
-            <a href="#"><i class="fas fa-home"></i> <span>الرئيسية</span></a>
+           
+            <a href="#" onclick="toggleMenu('main-menu')">
+                <i class="fas fa-home"></i> <span>الرئيسية</span>
+            </a>
 
-            <a href="#" onclick="toggleMenu('students-menu')">
+            <ul id="main-menu" class="submenu">
+                @* <li>
+                    <a asp-controller="Opinion" asp-action="AddOpinion">
+                        <i class="fas fa-comment-alt"></i> إضافة رأي
+                    </a>
+                </li> *@
+
+                <li>
+                    <a asp-controller="Opinion" asp-action="MyOpinions">
+                        <i class="fas fa-comments"></i> آرائي
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Case" asp-action="AllCases">
+                        <i class="fas fa-folder-open"></i> عرض القضايا
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Offer" asp-action="MyOffers">
+                        <i class="fas fa-paper-plane"></i> عروضي
+                    </a>
+                </li>
+
+            </ul>
+                <a href="#" onclick="toggleMenu('students-menu')">
                 <i class="fas fa-folder-open"></i> <span>ملفات رئيسية</span>
             </a>
+
             <ul id="students-menu" class="submenu">
-                <li><a asp-controller="Issue" asp-action="Index"><i class="fas fa-balance-scale"></i> ملف أنواع القضايا</a></li>
-                <li><a asp-controller="Court" asp-action="Index"><i class="fas fa-gavel"></i> ملف المحاكم</a></li>
-                <li><a asp-controller="Center" asp-action="Index"><i class="fas fa-landmark"></i> ملف الدوائر</a></li>
+                @if (currentUser != null && currentUser.CanAccessTypesOfIssue){
+
+                    <li><a asp-controller="Issue" asp-action="Index"><i class="fas fa-balance-scale"></i> ملف أنواع القضايا</a></li>
+                }
+                @if (currentUser != null && currentUser.CanAccessCourt){
+
+                    <li><a asp-controller="Court" asp-action="Index"><i class="fas fa-gavel"></i> ملف المحاكم</a></li>
+                }
+                @if (currentUser != null && currentUser.CanAccessCenter)
+                {
+
+                    <li><a asp-controller="Center" asp-action="Index"><i class="fas fa-landmark"></i> ملف الدوائر</a></li>
+                }
             </ul>
 
             <a href="#" onclick="toggleMenu('issue-menu')">
                 <i class="fas fa-folder"></i> <span>ملفات</span>
             </a>
             <ul id="issue-menu" class="submenu">
-                <li><a asp-controller="Client" asp-action="Index"><i class="fas fa-user-tie"></i> ملف الموكلين</a></li>
-                <li><a asp-controller="Party" asp-action="Index"><i class="fas fa-users"></i> ملف الخصوم</a></li>
-                <li><a asp-controller="IssueFile" asp-action="Index"><i class="fas fa-file-alt"></i> ملف القضايا</a></li>
+                @if (currentUser != null && currentUser.CanAccessClient)
+                {
+
+                    <li><a asp-controller="Client" asp-action="Index"><i class="fas fa-user-tie"></i> ملف الموكلين</a></li>
+                }
+                @if (currentUser != null && currentUser.CanAccessUsersFile)
+                {
+                    <li>
+                        <a asp-controller="Case" asp-action="Index">
+                            <i class="fas fa-folder-open"></i> حذف قضية  
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Case" asp-action="Add">
+                            <i class="fas fa-plus-circle"></i> إضافة قضية
+                        </a>
+                    </li>
+
+                    <li><a asp-controller="Users" asp-action="Create"><i class="fas fa-user-tie"></i> ملف المستخدمين</a></li>
+                }
+                @if (currentUser != null && currentUser.CanAccessParty)
+                {
+                    <li>
+                        <a asp-controller="Home" asp-action="TodaySessions">
+                            <i class="fas fa-calendar-day"></i> <span>جلسات اليوم</span>
+                        </a>
+                    </li>
+
+                    <li><a asp-controller="Party" asp-action="Index"><i class="fas fa-users"></i> ملف الخصوم</a></li>
+                }
+                @if (currentUser != null && currentUser.CanAccessTypesOfIssue)
+                {
+
+                    <li><a asp-controller="IssueFile" asp-action="Index"><i class="fas fa-file-alt"></i> ملف القضايا</a></li>
+                }
             </ul>
+
 
             <a href="#" onclick="toggleMenu('movement-menu')">
                 <i class="fas fa-history"></i> <span>حركات</span>
             </a>
             <ul id="movement-menu" class="submenu">
-                <li><a asp-controller="CourtSession" asp-action="Index"><i class="fas fa-calendar-alt"></i> ملف الجلسات</a></li>
-                <li>
-                    <a asp-controller="Receipt" asp-action="Index">
-                        <i class="fas fa-file-invoice-dollar"></i> سند قبض
-                    </a>
-                </li>
-                <li>
-                    <a asp-controller="Payment" asp-action="Index">
-                        <i class="fas fa-money-check-alt"></i> سند صرف
-                    </a>
-                </li>
-            </ul>
+                @if (currentUser != null && currentUser.CanAccessReceipts)
+                {
+                    <li>
+                        <a asp-controller="Receipt" asp-action="Index">
+                            <i class="fas fa-file-invoice-dollar"></i> سند قبض
+                        </a>
+                    </li>
+                }
+                @if (currentUser != null && currentUser.CanAccessPayments){
+                    <li><a asp-controller="CourtSession" asp-action="Index"><i class="fas fa-calendar-alt"></i> ملف الجلسات</a></li>
 
+                    <li>
+                        <a asp-controller="Payment" asp-action="Index">
+                            <i class="fas fa-money-check-alt"></i> سند صرف
+                        </a>
+                    </li>
+                }
+
+            </ul>
+            @if (currentUser != null && currentUser.CanAccessPrintReports) {
+                <a href="#" onclick="toggleMenu('report-menu')">
+                    <i class="fas fa-folder-open"></i> <span>تقارير</span>
+                </a>
+                <ul id="report-menu" class="submenu">
+                    <li>
+                        <a asp-controller="Report" asp-action="GetClientsName">
+                            <i class="fas fa-user-tie"></i> أسماء الوكلاء
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Report" asp-action="GetPartysName">
+                            <i class="fas fa-users"></i> أسماء الخصوم
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Report" asp-action="GetCourtsName">
+                            <i class="fas fa-gavel"></i> أسماء المحاكم
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Report" asp-action="GetCentersName">
+                            <i class="fas fa-building"></i> أسماء الدوائر
+                        </a>
+                    </li>
+
+                </ul>
+            }
+            @if (currentUser != null && currentUser.CanAccessSearch) {
+                <a href="#" onclick="toggleMenu('reportmain-menu')">
+                    <i class="fas fa-folder-open"></i> <span>تقارير رئيسية</span>
+                </a>
+                <ul id="reportmain-menu" class="submenu">
+                    <li>
+                        <a asp-controller="Report" asp-action="AdminDashboard">
+                            <i class="fas fa-chart-bar"></i> تقارير الإدارة
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Report" asp-action="LawyerActivity">
+                            <i class="fas fa-user-check"></i> <span>نشاط المحامين</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a asp-controller="Report" asp-action="GetIssuesName">
+                            <i class="fas fa-building"></i> تقرير القضايا
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Report" asp-action="GetReceiptIssue">
+                            <i class="fas fa-building"></i> تقرير ايرادات القضايا
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Report" asp-action="GetAgentAccountStatement">
+                            <i class="fas fa-building"></i> كشف حساب وكيل
+                        </a>
+                    </li>
+                </ul>
+            }
+
+            
           @*   @if (currentUser != null && currentUser.CanAccessGrades)
             {
                 <a href="#" onclick="toggleMenu('teachers-menu')"><i class="fas fa-chalkboard-teacher"></i> <span>المراحل الدراسية</span></a>

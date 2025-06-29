@@ -1,0 +1,49 @@
+﻿@using Law.CORE.ViewModels
+
+@model VWUser
+
+<h2>تسجيل الدخول</h2>
+
+<form method="post" asp-action="Register">
+    @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Display ModelState Errors -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <!-- Username Field -->
+    <div class="form-group">
+        <label asp-for="UserName">اسم المستخدم</label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group">
+        <label asp-for="Password">كلمة السر</label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-group">
+        <input type="submit" value=" انشاء حساب جديد" class="btn btn-primary" />
+    </div>
+
+    <!-- Forgot Password Link -->
+  
+</form>

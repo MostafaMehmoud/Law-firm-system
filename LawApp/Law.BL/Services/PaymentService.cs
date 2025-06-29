@@ -127,7 +127,7 @@ namespace Law.BL.Services
 
         public int GetMaxPaymentId()
         {
-            throw new NotImplementedException();
+            return _unitOfWork.payments.GetMaxIdOfItem();
         }
 
         public async Task<PaymentDto> GetMinPayment()

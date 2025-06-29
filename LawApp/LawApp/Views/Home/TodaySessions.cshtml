@@ -1,0 +1,41 @@
+﻿@using Law.CORE.ViewModels
+@model List<TodaySessionViewModel>
+
+<h3 class="mb-4">📅 الجلسات التي يجب حضورها اليوم</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">لا توجد جلسات مجدولة لهذا اليوم.</div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>رقم الجلسة</th>
+                <th>اسم القضية</th>
+                <th>اسم الموكل</th>
+                <th>اسم الخصم</th>
+                <th>اسم المحكمة</th>
+                <th>اسم الدائرة</th>
+                <th>الهاتف</th>
+                <th>ملاحظات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.ClaimNumber</td>
+                    <td>@s.IssueName</td>
+                    <td>@s.ClientName</td>
+                    <td>@s.PartyName</td>
+                    <td>@s.CourtName</td>
+                    <td>@s.CenterName</td>
+                    <td>@s.ClientPhone</td>
+                    <td>@s.Notes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
