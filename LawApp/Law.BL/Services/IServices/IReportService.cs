@@ -19,6 +19,8 @@ namespace Law.BL.Services.IServices
         Task<AdminReportViewModel> GetAdminReportAsync();
         public Task<List<TodaySessionViewModel>> GetTodaySessionsViewModelAsync();
         Task<List<AdminLawyerActivityViewModel>> GetAllLawyerActivityAsync();
+        Task<List<OfferAdminViewModel>> GetAllOffersForAdminAsync();
+        Task<bool> AwardOfferAsync(int offerId);
 
 
 

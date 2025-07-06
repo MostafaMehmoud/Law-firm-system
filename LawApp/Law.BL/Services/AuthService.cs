@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.EntityFrameworkCore;
 
 namespace Law.BL.Services
 {
@@ -256,5 +257,25 @@ namespace Law.BL.Services
         {
             await _unitOfWork.auth.Logout();
         }
+        public async Task<ApplicationUser> GetNextOrPreviousItemByCode(int userNumber, string direction)
+        {
+            if (direction == "next")
+            {
+                return await _userManager.Users
+                    .Where(u => u.UserNumber > userNumber)
+                    .OrderBy(u => u.UserNumber)
+                    .FirstOrDefaultAsync();
+            }
+            else if (direction == "previous")
+            {
+                return await _userManager.Users
+                    .Where(u => u.UserNumber < userNumber)
+                    .OrderByDescending(u => u.UserNumber)
+                    .FirstOrDefaultAsync();
+            }
+
+            return null;
+        }
+
     }
 }

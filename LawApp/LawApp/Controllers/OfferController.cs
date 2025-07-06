@@ -3,6 +3,7 @@ using Law.CORE.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Law.BL.Services;
 
 namespace LawApp.Controllers
 {
@@ -10,11 +11,13 @@ namespace LawApp.Controllers
     {
         private readonly IOfferService _offerService;
         private readonly IAuthService _authService;
+        private readonly IReportService _reportService; 
 
-        public OfferController(IOfferService offerService, IAuthService authService)
+        public OfferController(IOfferService offerService, IAuthService authService, IReportService reportService)
         {
             _offerService = offerService;
             _authService = authService;
+            _reportService = reportService;
         }
 
         [HttpGet]
@@ -79,6 +82,19 @@ namespace LawApp.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var model = await _offerService.GetOffersByUserAsync(userId);
             return View(model);
+        }
+        public async Task<IActionResult> AllOffers()
+        {
+            var model = await _reportService.GetAllOffersForAdminAsync();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AwardOffer(int offerId)
+        {
+            var success = await _reportService.AwardOfferAsync(offerId);
+            TempData["Success"] = success ? "تم ترسية العرض بنجاح." : "فشل في ترسية العرض.";
+            return RedirectToAction("AllOffers");
         }
 
     }

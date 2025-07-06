@@ -32,5 +32,6 @@ namespace Law.BL.Services.IServices
         Task<string> AuthenticateUser(string username, string password);
         Task<bool> RegisterUser(ApplicationUser user, string password);
         public  Task<OperationResult> RegisterWithoutRolesAsync(VWUser vWUser);
+        public Task<ApplicationUser> GetNextOrPreviousItemByCode(int userNumber, string direction);
     }
 }

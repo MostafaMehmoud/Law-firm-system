@@ -1,5 +1,6 @@
 ﻿using Law.BL.Services.IServices;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -14,12 +15,14 @@ namespace LawApp.Controllers
             _centerService = centerService;
             _courtService = courtService;
         }
+        [Permission("CanAccessCenter")]
         public async Task<IActionResult> Index()
         {
             var listcourt = await _courtService.GetAll();
             ViewBag.listCourts = new SelectList(listcourt.ToList(), "Id", "CourtName");
             return View();
         }
+        [ApiPermission("CanAccessCenter")]
         public async Task<IActionResult> GetNextCenterCode()
         {
             try
@@ -36,6 +39,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessCenter")]
         public async Task<IActionResult> AddCenter([FromBody] CreateCenter model)
         {
             if (!ModelState.IsValid)
@@ -58,6 +62,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessCenter")]
         public async Task<IActionResult> EditCenter([FromBody] UpdateCenter model)
         {
             if (!ModelState.IsValid)
@@ -77,6 +82,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessCenter")]
         public async Task<IActionResult> DeleteCenter(int id)
         {
             try
@@ -90,6 +96,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpGet("GetMinCenter")]
+        [ApiPermission("CanAccessCenter")]
         public async Task<IActionResult> GetMinCenter()
         {
             var Center = await _centerService.GetMinCenter();
@@ -99,6 +106,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxCenter")]
+        [ApiPermission("CanAccessCenter")]
         public async Task<IActionResult> GetMaxCenter()
         {
             var Center = await _centerService.GetMaxCenter();
@@ -108,6 +116,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextCenter/{id}")]
+        [ApiPermission("CanAccessCenter")]
         public async Task<IActionResult> GetNextCenter(int id)
         {
             if (id == 0)
@@ -121,6 +130,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetPreviousCenter/{id}")]
+        [ApiPermission("CanAccessCenter")]
         public async Task<IActionResult> GetPreviousCenter(int id)
         {
             if (id == 0)

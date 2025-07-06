@@ -1,6 +1,7 @@
 ﻿using Law.BL.Services.IServices;
 using Law.CORE.Entities;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -29,6 +30,7 @@ namespace LawApp.Controllers
             _issueFileService = issueFileService;
             _courtSessionService = courtSessionService;
         }
+        [Permission("CanAccessPayments")]
         public async Task<IActionResult> Index()
         {
             ViewBag.listIssueFiles= new SelectList((await _issueFileService.GetAll()).ToList(), "Id", "IssueName");
@@ -39,11 +41,13 @@ namespace LawApp.Controllers
             ViewBag.listParties = new SelectList((await _partyService.GetAll()).ToList(), "Id", "PartyName");
             return View();
         }
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetIssueDetails(int id)
         {
             IssueFile result =await _issueFileService.GetbyId(id);
             return Json(result);
         }
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetNextCourtSessionCode()
         {
             try
@@ -60,6 +64,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> AddCourtSession([FromForm] UpdateCourtSession model)
         {
 
@@ -88,6 +93,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> EditCourtSession([FromForm] UpdateCourtSession model)
         {
             ModelState.Remove("CourtSessionDate");
@@ -112,6 +118,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> DeleteCourtSession(int id)
         {
             try
@@ -125,6 +132,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpGet("GetMinCourtSession")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetMinCourtSession()
         {
             CourtSessionDto CourtSession = await _courtSessionService.GetMinCourtSession();
@@ -134,6 +142,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxCourtSession")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetMaxCourtSession()
         {
             var CourtSession = await _courtSessionService.GetMaxCourtSession();
@@ -143,6 +152,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextCourtSession/{id}")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetNextCourtSession(int id)
         {
             if (id == 0)
@@ -156,6 +166,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetPreviousCourtSession/{id}")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetPreviousCourtSession(int id)
         {
             if (id == 0)

@@ -44,12 +44,14 @@ namespace LawApp.Controllers
             return View(viewModel);
         }
         [HttpGet]
+        [Permission("CanAccessUsersFile")]
         public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
+        [Permission("CanAccessUsersFile")]
         public async Task<IActionResult> Add(CaseViewModel model)
         {
             if (!ModelState.IsValid)
@@ -66,6 +68,7 @@ namespace LawApp.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permission("CanAccessUsersFile")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _caseService.DeleteCaseAsync(id);

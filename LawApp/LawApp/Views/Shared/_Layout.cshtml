@@ -77,67 +77,7 @@
         .nav-link{
         color:white !important;
         }
-        /*start  style sidebar */
-        /*  .sidebar {
-        width: 250px;
-        background: #318eeb;
-        color: white;
-        min-height: 100vh;
-        position: fixed;
-        top: 0;
-        right: 0;
-        padding: 20px 10px;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .sidebar a {
-        display: flex;
-        align-items: center;
-        padding: 12px 15px;
-        color: white;
-        text-decoration: none;
-        font-size: 16px;
-        transition: background 0.3s, padding-right 0.3s;
-        border-radius: 8px;
-        margin-bottom: 5px;
-        }
-
-        .sidebar a i {
-        margin-left: 10px;
-        font-size: 18px;
-        }
-
-        .sidebar a:hover {
-        background-color: rgba(255, 255, 255, 0.15);
-        padding-right: 20px;
-        }
-
-        .submenu {
-        list-style: none;
-        padding-left: 20px;
-        margin-top: 5px;
-        display: none;
-        }
-
-        .submenu li {
-        margin-bottom: 5px;
-        }
-
-        .submenu li a {
-        font-size: 14px;
-        background-color: rgba(255, 255, 255, 0.1);
-        padding: 8px 12px;
-        display: block;
-        border-radius: 6px;
-        transition: background 0.3s;
-        }
-
-        .submenu li a:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-        } */
-        /* end style sidebar */
-        /* تهيئة عامة */
+        
         body {
         margin: 0;
         padding: 0;
@@ -400,7 +340,11 @@
                             <i class="fas fa-plus-circle"></i> إضافة قضية
                         </a>
                     </li>
-
+                    <li>
+                        <a asp-controller="Offer" asp-action="AllOffers">
+                            <i class="fas fa-plus-circle">ترسيت القضايا الي محامين</i>  
+                        </a>
+                    </li>
                     <li><a asp-controller="Users" asp-action="Create"><i class="fas fa-user-tie"></i> ملف المستخدمين</a></li>
                 }
                 @if (currentUser != null && currentUser.CanAccessParty)
@@ -507,70 +451,7 @@
             }
 
             
-          @*   @if (currentUser != null && currentUser.CanAccessGrades)
-            {
-                <a href="#" onclick="toggleMenu('teachers-menu')"><i class="fas fa-chalkboard-teacher"></i> <span>المراحل الدراسية</span></a>
-                <ul id="teachers-menu" class="submenu">
-
-                    <li><a asp-controller="AcademicStage" asp-action="Index"> اسم المرحلة </a></li>
-                    <li><a asp-controller="ClassTypeName" asp-action="Index">اضافة سنوات الي المرحلة </a></li>
-                    <li><a asp-controller="ClassType" asp-action="Index">المرحلة الدراسية</a></li>
-                    <li><a asp-controller="ClassType" asp-action="Index"> اضافة قسط علي المرحلة</a></li>
-                    <li><a asp-controller="ClassType" asp-action="ReportAllClassType">قائمة المراحل الدراسية</a></li>
-                </ul>
-            }
-            <a href="#" onclick="toggleMenu('cash-menu')"><i class="fas fa-chalkboard-teacher"></i> <span> السندات</span></a>
-            <ul id="cash-menu" class="submenu">
-                @if (currentUser != null && currentUser.CanAccessReceipts)
-                {
-                    <li><a asp-controller="Receipt" asp-action="Index">  سندات قبض </a></li>
-                }
-                @if (currentUser != null && currentUser.CanAccessPayments)
-                {
-                    <li><a asp-controller="Payment" asp-action="Index">سندات صرف </a></li>
-                }
-
-
-            </ul>
-            @if (currentUser != null && currentUser.CanAccessPrintReports)
-            {
-                <a href="#" onclick="toggleMenu('report-menu')"><i class="fas fa-chalkboard-teacher"></i> <span>تقارير </span></a>
-                <ul id="report-menu" class="submenu">
-                    <li><a asp-controller="Reports" asp-action="ReportStudentSName"> قائمة اسماء الطلبة  </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportStudentSFatherName"> تقرير عن اولياء الامور  </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportStudentSMotherName"> تقرير عن امهات الطلبة  </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportStudentFeesName"> تقرير رسوم الطلبة    </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportAccountStatement"> تقرير  حساب طالب    </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportStudentCompleteFees"> تقرير بالمسددين كاملا    </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportStudentPartFees"> تقرير بالمسددين جزء من المبلغ      </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportStudentNoFees"> تقرير بالطلبة غير مسددين      </a></li>
-
-
-
-                </ul>
-                <a href="#" onclick="toggleMenu('note-menu')"><i class="fas fa-chalkboard-teacher"></i> <span>اشعارات </span></a>
-                <ul id="note-menu" class="submenu">
-                    <li><a asp-controller="Reports" asp-action="ReportStudentNotificationFees">اشعار مطالبة بالرسوم </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportDefinationStudent"> شهادة تعريف</a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportBarcodeStudent">  طباعة الباركود</a></li>
-                    @*  <li><a asp-controller="" asp-action=""> Student List Report </a></li>
- 
-                </ul>
-                <a href="#" onclick="toggleMenu('bondes-menu')"><i class="fas fa-chalkboard-teacher"></i> <span>تقرير السندات </span></a>
-                <ul id="bondes-menu" class="submenu">
-                    <li><a asp-controller="Reports" asp-action="ReportPayments">تقرير  سندات القبض </a></li>
-                    <li><a asp-controller="Reports" asp-action="ReportFees"> تقرير ملخص الرسوم</a></li>
-                    @*  <li><a asp-controller="" asp-action="">  احصائية للمبالغ المسحقة </a></li> 
-                    <li><a asp-controller="Reports" asp-action="ReportStudentSNameOrderByStudentName"> تقرير بالطلبة ابجديا </a></li>
-
-                </ul>
-            }
-          @*   @if (currentUser != null && currentUser.CanAccessUsersFile)
-            {
-                <a asp-controller="TransferringClasses" asp-action="Index"><i class="fas fa-cogs"></i> <span>نقل الصفوف</span></a>
-                <a asp-controller="Users" asp-action="Create"><i class="fas fa-cogs"></i> <span>ملف المستخدمين </span></a>
-
-            } *@
+        
         </div>
         <div class="content">
             @RenderBody()
@@ -586,76 +467,7 @@
 
 
 
-    <!-- partial -->
-    @*  <div class="container-fluid page-body-wrapper">
-
-
-
-            <!-- partial -->
-            <!-- partial:partials/_sidebar.html -->
-            <nav class="sidebar sidebar-offcanvas" id="sidebar">
-                <ul class="nav pe-0">
-                    <li class="nav-item nav-profile">
-                        <a href="#" class="nav-link">
-                            <div class="nav-profile-image">
-                                <img src="~/assets/images/faces/face1.jpg" alt="profile">
-                                <span class="login-status online"></span>
-                                <!--change to offline or busy as needed-->
-                            </div>
-                            <div class="nav-profile-text d-flex flex-column">
-                                <span class="font-weight-bold mb-2">مصطفي محمود</span>
-                                <span class="text-secondary text-small">مدير </span>
-                            </div>
-                            <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
-                        </a>
-                    </li>
-                   @*  <li class="nav-item">
-                        <a class="nav-link" >
-                            <i class="mdi mdi-home menu-icon text-primary"></i>
-                            <span class="menu-title text-primary font-weight-bold"></span>
-
-                        </a>
-                    </li> 
-                    <li class="nav-item">
-                       @*  <a class="nav-link collapsed" data-bs-toggle="collapse" href="#page-layouts" aria-expanded="false" aria-controls="page-layouts">
-                            <i class="mdi mdi-apps menu-icon fs-5 text-primary"></i>
-                            <i class="menu-arrow"></i>
-
-                            <span class="menu-title fs-5 text-primary">الملفات الرئيسية </span>
-
-                        </a>
-                        <div class="collapse" id="page-layouts" style="">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="National" asp-action="Index">الجنسية</a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="FileBus" asp-action="Index">ملف الباص</a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="FileBus" asp-action="List"> قائمة ملف الباص</a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="AcademicStage" asp-action="Index">اسم المرحلة  </a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="ClassTypeName" asp-action="Index"> اسماء الفصول </a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="ClassType" asp-action="Index"> المرحلة الدراسية </a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="ClassType" asp-action="List">قائمة المراحل الدراسية </a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="Installment" asp-action="Index"> اسماء الاقساط  </a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="Department" asp-action="Index"> الاقسام   </a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="Student" asp-action="Index"> ملف الطالب   </a></li>
-                                <li class="nav-item"> <a class="nav-link fs-7" asp-controller="ClassType" asp-action="ReportAllClassType">  تجربة تقرير   </a></li>
-                            </ul>
-                        </div> 
-
-                    </li>
-                </ul>
-            </nav>
-            <!-- partial -->
-            <div class="main-panel">
-                <div class="content-wrapper">
-                   @RenderBody()
-                </div>
-
-
-            </div>
-            <!-- main-panel ends -->
-        </div>  *@
-
-
-
+    
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -663,7 +475,7 @@
     <script src="~/assets/js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- End custom js for this page -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>

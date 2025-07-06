@@ -1,5 +1,6 @@
 ﻿using Law.BL.Services.IServices;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LawApp.Controllers
@@ -11,10 +12,12 @@ namespace LawApp.Controllers
         {
             _courtService = courtService;   
         }
+        [Permission("CanAccessCourt")]
         public IActionResult Index()
         {
             return View();
         }
+        [ApiPermission("CanAccessCourt")]
         public async Task<IActionResult> GetNextCourtCode()
         {
             try
@@ -31,6 +34,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessCourt")]
         public async Task<IActionResult> AddCourt([FromBody] CreateCourt model)
         {
             if (!ModelState.IsValid)
@@ -53,6 +57,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessCourt")]
         public async Task<IActionResult> EditCourt([FromBody] UpdateCourt model)
         {
             if (!ModelState.IsValid)
@@ -72,6 +77,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessCourt")]
         public async Task<IActionResult> DeleteCourt(int id)
         {
             try
@@ -85,6 +91,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpGet("GetMinCourt")]
+        [ApiPermission("CanAccessCourt")]
         public async Task<IActionResult> GetMinCourt()
         {
             var Court = await _courtService.GetMinCourt();
@@ -94,6 +101,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxCourt")]
+        [ApiPermission("CanAccessCourt")]
         public async Task<IActionResult> GetMaxCourt()
         {
             var Court = await _courtService.GetMaxCourt();
@@ -103,6 +111,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextCourt/{id}")]
+        [ApiPermission("CanAccessCourt")]
         public async Task<IActionResult> GetNextCourt(int id)
         {
             if (id == 0)
@@ -114,6 +123,7 @@ namespace LawApp.Controllers
                 return NotFound(new { Message = "No next record found." });
             return Ok(Court);
         }
+        [ApiPermission("CanAccessCourt")]
 
         [HttpGet("GetPreviousCourt/{id}")]
         public async Task<IActionResult> GetPreviousCourt(int id)

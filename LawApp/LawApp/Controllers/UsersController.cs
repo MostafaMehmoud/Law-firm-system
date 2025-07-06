@@ -3,6 +3,7 @@ using System.Security.Permissions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Law.BL.Services.IServices;
+using LawApp.Attributes;
 
 namespace LawApp.Controllers
 {
@@ -31,6 +32,7 @@ namespace LawApp.Controllers
             ViewBag.ListLevels = new SelectList(GetLevel(), "Value", "Text");
             return View(Model);
         }
+        [ApiPermission("CanAccessUsersFile")]
         public async Task<IActionResult> GetNextCode()
         {
             try
@@ -47,6 +49,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessUsersFile")]
         public async Task<IActionResult> Add(VWUser user)
         {
             ModelState.Remove("Id"); // في حالة استخدام تسجيل جديد
@@ -77,6 +80,7 @@ namespace LawApp.Controllers
 
         }
         [HttpPost]
+        [ApiPermission("CanAccessUsersFile")]
         public async Task<IActionResult> Delete(string id)
         {
 
@@ -89,6 +93,7 @@ namespace LawApp.Controllers
 
         }
         [HttpPost]
+        [ApiPermission("CanAccessUsersFile")]
         public async Task<IActionResult> Edit(VWUser user)
         {
 
@@ -118,6 +123,7 @@ namespace LawApp.Controllers
             return BadRequest(new { success = false, errors = resultMessage.Errors });
         }
         [HttpGet("GetMin")]
+        [ApiPermission("CanAccessUsersFile")]
         public async Task<IActionResult> GetMin()
         {
             var ClassType = await _iserviceAuth.GetMin();
@@ -127,6 +133,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMax")]
+        [ApiPermission("CanAccessUsersFile")]
         public async Task<IActionResult> GetMax()
         {
             var national = await _iserviceAuth.GetMax();
@@ -135,41 +142,48 @@ namespace LawApp.Controllers
             return Ok(national);
         }
 
-        [HttpGet("GetNext/{id}")]
-        public async Task<IActionResult> GetNext(int id)
+        [HttpGet("GetNext/{userNumber}")]
+        [ApiPermission("CanAccessUsersFile")]
+        public async Task<IActionResult> GetNext(int userNumber)
         {
-            if (id == 0)
+            if (userNumber == 0)
             {
-                id = await _iserviceAuth.GetMaxIdOfItem();
+                userNumber = await _iserviceAuth.GetMaxIdOfItem();
             }
-            var national = await _iserviceAuth.GetNextUser(id);
-            if (national == null)
-                return NotFound(new { Message = "No next record found." });
-            return Ok(national);
+
+            var nextUser = await _iserviceAuth.GetNextOrPreviousItemByCode(userNumber, "next");
+
+            if (nextUser == null)
+                return NotFound(new { Message = "لا يوجد مستخدم بعد هذا." });
+
+            return Ok(nextUser);
         }
 
-        [HttpGet("GetPrevious/{id}")]
-        public async Task<IActionResult> GetPrevious(int id = 0)
+        [HttpGet("GetPrevious/{userNumber}")]
+        [ApiPermission("CanAccessUsersFile")]
+        public async Task<IActionResult> GetPrevious(int userNumber)
         {
-
-
-
-
-            if (id == 0)
+            if (userNumber == 0)
             {
-                id = await _iserviceAuth.GetMaxIdOfItem();
+                userNumber = await _iserviceAuth.GetMaxIdOfItem();
             }
-            var national = await _iserviceAuth.GetPreviousUser(id);
-            if (national == null)
-                return NotFound(new { Message = "No next record found." });
-            return Ok(national);
+
+            var previousUser = await _iserviceAuth.GetNextOrPreviousItemByCode(userNumber, "previous");
+
+            if (previousUser == null)
+                return NotFound(new { Message = "لا يوجد مستخدم قبل هذا." });
+
+            return Ok(previousUser);
         }
+
+
         public IActionResult Login()
         {
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
@@ -190,7 +204,7 @@ namespace LawApp.Controllers
             return View(model); // This will send the ModelState back to the view
         }
         [HttpPost]
-
+       
         public async Task<IActionResult> Logout()
         {
             _iserviceAuth.Logout();
@@ -201,11 +215,13 @@ namespace LawApp.Controllers
             return View();
         }
         [HttpGet]
+      
         public IActionResult ForgotPassword()
         {
             return View();
         }
         [HttpPost]
+       
         public async Task<IActionResult> ForgotPassword(ForgotPasswordByUsernameViewModel model)
         {
             if (!ModelState.IsValid)

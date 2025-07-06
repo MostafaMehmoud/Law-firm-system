@@ -1,5 +1,6 @@
 ﻿using Law.BL.Services.IServices;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LawApp.Controllers
@@ -11,10 +12,12 @@ namespace LawApp.Controllers
         {
             _service = service;
         }
+        [Permission("CanAccessTypesOfIssue")]
         public IActionResult Index()
         {
             return View();
         }
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetNextIssueCode()
         {
             try
@@ -31,6 +34,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> AddIssue([FromBody] CreateIssue model)
         {
             if (!ModelState.IsValid)
@@ -53,6 +57,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> EditIssue([FromBody] UpdateIssue model)
         {
             if (!ModelState.IsValid)
@@ -72,6 +77,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> DeleteIssue(int id)
         {
             try
@@ -85,6 +91,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpGet("GetMinIssue")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetMinIssue()
         {
             var Issue = await _service.GetMinIssue();
@@ -94,6 +101,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxIssue")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetMaxIssue()
         {
             var Issue = await _service.GetMaxIssue();
@@ -103,6 +111,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextIssue/{id}")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetNextIssue(int id)
         {
             if (id == 0)
@@ -114,6 +123,7 @@ namespace LawApp.Controllers
                 return NotFound(new { Message = "No next record found." });
             return Ok(Issue);
         }
+        [ApiPermission("CanAccessTypesOfIssue")]
 
         [HttpGet("GetPreviousIssue/{id}")]
         public async Task<IActionResult> GetPreviousIssue(int id)

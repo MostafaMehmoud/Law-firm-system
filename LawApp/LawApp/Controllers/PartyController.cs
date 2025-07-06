@@ -1,5 +1,6 @@
 ﻿using Law.BL.Services.IServices;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LawApp.Controllers
@@ -11,10 +12,12 @@ namespace LawApp.Controllers
         {
             _service = service;
         }
+        [Permission("CanAccessParty")]
         public IActionResult Index()
         {
             return View();
         }
+        [ApiPermission("CanAccessParty")]
         public async Task<IActionResult> GetNextPartyCode()
         {
             try
@@ -31,6 +34,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessParty")]
         public async Task<IActionResult> AddParty([FromForm] UpdateParty model)
         {
             ModelState.Remove("OldImageBase64");
@@ -57,6 +61,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessParty")]
         public async Task<IActionResult> EditParty([FromForm] UpdateParty model)
         {
             ModelState.Remove("PartyImage");
@@ -82,6 +87,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessParty")]
         public async Task<IActionResult> DeleteParty(int id)
         {
             try
@@ -94,6 +100,7 @@ namespace LawApp.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+        [ApiPermission("CanAccessParty")]
         [HttpGet("GetMinParty")]
         public async Task<IActionResult> GetMinParty()
         {
@@ -104,6 +111,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxParty")]
+        [ApiPermission("CanAccessParty")]
         public async Task<IActionResult> GetMaxParty()
         {
             var Party = await _service.GetMaxParty();
@@ -113,6 +121,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextParty/{id}")]
+        [ApiPermission("CanAccessParty")]
         public async Task<IActionResult> GetNextParty(int id)
         {
             if (id == 0)
@@ -126,6 +135,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetPreviousParty/{id}")]
+        [ApiPermission("CanAccessParty")]
         public async Task<IActionResult> GetPreviousParty(int id)
         {
             if (id == 0)

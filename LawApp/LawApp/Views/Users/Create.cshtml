@@ -418,92 +418,100 @@
             });
 
             // Handler for the Previous button
-            $("#btnPrevious").click(async function () {
-                const nationalId = $("#userId").val();
-                if (!nationalId) {
-                    Swal.fire("تنبيه", "Please select a record first.", "warning");
-                    return;
+                   $("#btnPrevious").click(async function () {
+            const userNumber = parseInt($("#UserCode").val()) || 0;
+
+            try {
+                const response = await $.ajax({
+                    type: "GET",
+                    url: '/GetPrevious/' + userNumber,
+                    dataType: "json"
+                });
+
+                if (response) {
+                    console.log(response);
+                    $("#userId").val(response.id);
+                    $("#userName").val(response.userName);
+                    $("#UserCode").val(response.userNumber);
+                    $("#password").val(response.password);
+                    $("#level").val(response.level);
+
+                    // صلاحيات
+                    $("#CanAccessClient").prop("checked", response.canAccessClient);
+                    $("#CanAccessParty").prop("checked", response.canAccessParty);
+                    $("#CanAccessCourt").prop("checked", response.canAccessCourt);
+                    $("#CanAccessCenter").prop("checked", response.canAccessCenter);
+                    $("#canAccessPayments").prop("checked", response.canAccessPayments);
+                    $("#canAccessPrintReports").prop("checked", response.canAccessPrintReports);
+                    $("#canAccessSearch").prop("checked", response.canAccessSearch);
+                    $("#canAccessUsersFile").prop("checked", response.canAccessUsersFile);
+                    $("#canAccessReceipts").prop("checked", response.canAccessReceipts);
+                    $("#CanAccessTypesOfIssue").prop("checked", response.canAccessTypesOfIssue);
+                } else {
+                    Swal.fire("تنبيه", "لا يوجد مستخدم قبل هذا.", "info");
                 }
-                try {
-                    const response = await $.ajax({
-                        type: "GET",
-                        url: '@Url.Action("GetPrevious", "Users", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", nationalId),
-                        dataType: "json"
-                    });
-                    if (response) {
-                        console.log(response)
-                         $("#userId").val(response.id);
-                        $("#userName").val(response.userName);
-                        $("#UserCode").val(response.userNumber);
-                        $("#password").val(response.password);
-                        $("#level").val(response.level);
-                        $("#CanAccessClient").prop("checked",response.canAccessClient);
-                        $("#CanAccessParty").prop("checked",response.canAccessParty);
-                        $("#CanAccessCourt").prop("checked",response.canAccessCourt);
-                        $("#CanAccessCenter").prop("checked",response.canAccessCenter);
-                        $("#canAccessPayments").prop("checked",response.canAccessPayments);
-                        $("#canAccessPrintReports").prop("checked",response.canAccessPrintReports);
-                        $("#canAccessSearch").prop("checked",response.canAccessSearch);
-                        $("#canAccessUsersFile").prop("checked",response.canAccessUsersFile);
-        $("#canAccessReceipts").prop("checked",response.canAccessReceipts);
-        $("#CanAccessTypesOfIssue").prop("checked",response.canAccessTypesOfIssue);
-                    }  else {
-                        Swal.fire("تنبيه", "No previous record found.", "info");
-                    }
-                } catch (error) {
-                     // If the status code is 404, display a specific warning message.
-        if (error.status == 404) {
-            Swal.fire("تنبيه", "لا يوجد المستخدم قبل تلك", "info");
-        } else {
-            console.error("Error fetching previous national:", error);
-            Swal.fire("خطأ", "Error fetching data.", "error");
-        }
+            } catch (error) {
+                if (error.status === 404) {
+                    Swal.fire("تنبيه", "لا يوجد مستخدم قبل هذا.", "info");
+                } else if (error.status === 403) {
+                    Swal.fire("غير مصرح", "ليس لديك صلاحية لعرض السجل السابق.", "warning");
+                } else if (error.status === 401) {
+                    Swal.fire("غير مسجل دخول", "يرجى تسجيل الدخول أولاً.", "warning");
+                } else {
+                    console.error("خطأ في جلب المستخدم السابق:", error);
+                    Swal.fire("خطأ", "حدث خطأ أثناء جلب البيانات.", "error");
                 }
-            });
+            }
+        });
+
 
             // Handler for the Next button
-            $("#btnNext").click(async function () {
-                const nationalId = $("#userId").val();
-                if (!nationalId) {
-                    Swal.fire("تنبيه", "Please select a record first.", "warning");
-                    return;
+                  $("#btnNext").click(async function () {
+            const userNumber = parseInt($("#UserCode").val()) || 0;
+
+            try {
+                const response = await $.ajax({
+                    type: "GET",
+                    url: '/GetNext/' + userNumber,
+                    dataType: "json"
+                });
+
+                if (response) {
+                    console.log(response);
+                    $("#userId").val(response.id);
+                    $("#userName").val(response.userName);
+                    $("#UserCode").val(response.userNumber);
+                    $("#password").val(response.password);
+                    $("#level").val(response.level);
+
+                    // صلاحيات المستخدم
+                    $("#CanAccessClient").prop("checked", response.canAccessClient);
+                    $("#CanAccessParty").prop("checked", response.canAccessParty);
+                    $("#CanAccessCourt").prop("checked", response.canAccessCourt);
+                    $("#CanAccessCenter").prop("checked", response.canAccessCenter);
+                    $("#canAccessPayments").prop("checked", response.canAccessPayments);
+                    $("#canAccessPrintReports").prop("checked", response.canAccessPrintReports);
+                    $("#canAccessSearch").prop("checked", response.canAccessSearch);
+                    $("#canAccessUsersFile").prop("checked", response.canAccessUsersFile);
+                    $("#canAccessReceipts").prop("checked", response.canAccessReceipts);
+                    $("#CanAccessTypesOfIssue").prop("checked", response.canAccessTypesOfIssue);
+                } else {
+                    Swal.fire("تنبيه", "لا يوجد مستخدم بعد هذا.", "info");
                 }
-                try {
-                    const response = await $.ajax({
-                        type: "GET",
-                        url: '@Url.Action("GetNext", "Users", new { id = "ID_PLACEHOLDER" })'.replace("ID_PLACEHOLDER", nationalId),
-                        dataType: "json"
-                    });
-                     if (response) {
-                        console.log(response)
-                          $("#userId").val(response.id);
-                        $("#userName").val(response.userName);
-                        $("#UserCode").val(response.userNumber);
-                        $("#password").val(response.password);
-                        $("#level").val(response.level);
-                        $("#CanAccessClient").prop("checked",response.canAccessClient);
-                        $("#CanAccessParty").prop("checked",response.canAccessParty);
-                        $("#CanAccessCourt").prop("checked",response.canAccessCourt);
-                        $("#CanAccessCenter").prop("checked",response.canAccessCenter);
-                        $("#canAccessPayments").prop("checked",response.canAccessPayments);
-                        $("#canAccessPrintReports").prop("checked",response.canAccessPrintReports);
-                        $("#canAccessSearch").prop("checked",response.canAccessSearch);
-                        $("#canAccessUsersFile").prop("checked",response.canAccessUsersFile);
-                        $("#canAccessReceipts").prop("checked",response.canAccessReceipts);
-                        $("#CanAccessTypesOfIssue").prop("checked",response.canAccessTypesOfIssue);
-                    } else {
-                        Swal.fire("تنبيه", "No next record found.", "info");
-                    }
-                } catch (error) {
-                    // If the status code is 404, display a specific warning message.
-        if (error.status == 404) {
-            Swal.fire("تنبيه", "لا يوجد المستخدم بعد تلك.", "info");
-        } else {
-            console.error("Error fetching previous national:", error);
-            Swal.fire("خطأ", "Error fetching data.", "error");
-        }
+            } catch (error) {
+                if (error.status === 404) {
+                    Swal.fire("تنبيه", "لا يوجد مستخدم بعد هذا.", "info");
+                } else if (error.status === 403) {
+                    Swal.fire("غير مصرح", "ليس لديك صلاحية لعرض السجل التالي.", "warning");
+                } else if (error.status === 401) {
+                    Swal.fire("غير مسجل دخول", "يرجى تسجيل الدخول أولاً.", "warning");
+                } else {
+                    console.error("خطأ في جلب المستخدم التالي:", error);
+                    Swal.fire("خطأ", "حدث خطأ أثناء جلب البيانات.", "error");
                 }
-            });
+            }
+        });
+
         });
     </script>
 }

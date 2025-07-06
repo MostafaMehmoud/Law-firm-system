@@ -23,6 +23,43 @@ namespace Law.BL.Services
             _context = context;
             _unitOfWork= unitOfWork;    
         }
+        public async Task<List<OfferAdminViewModel>> GetAllOffersForAdminAsync()
+        {
+            var offers = await _unitOfWork.OfferRepository.GetAll();
+            var cases = await _unitOfWork.cases.GetAll();
+            var users = await _unitOfWork.auth.GetAllUsers();
+
+            return offers.Select(o => new OfferAdminViewModel
+            {
+                OfferId = o.Id,
+                LawyerName = users.FirstOrDefault(u => u.Id == o.UserId)?.UserName ?? "غير معروف",
+                PhoneNumber = o.PhoneNumber,
+                OfficeNumber = o.OfficeNumber,
+                ProposedSolution = o.ProposedSolution,
+                ProposedFees = o.ProposedFees,
+                SubmittedAt = o.SubmittedAt,
+                CaseId = o.CaseId,
+                CaseTitle = cases.FirstOrDefault(c => c.Id == o.CaseId)?.Title ?? "غير معروفة",
+                IsAwarded = o.IsAwarded  // يجب أن تضيف هذا الحقل في كيان Offer
+            }).ToList();
+        }
+
+        public async Task<bool> AwardOfferAsync(int offerId)
+        {
+            var offer = await _unitOfWork.OfferRepository.GetById(offerId);
+            if (offer == null) return false;
+
+            // إلغاء ترسية أي عرض سابق لنفس القضية
+            var allOffers = await _unitOfWork.OfferRepository.GetAll();
+            foreach (var o in allOffers.Where(x => x.CaseId == offer.CaseId))
+            {
+                o.IsAwarded = false;
+            }
+
+            offer.IsAwarded = true;
+             _unitOfWork.Complete();
+            return true;
+        }
 
         public async Task<List<CenterReportDto>> GetCentersReportViewModel()
         {

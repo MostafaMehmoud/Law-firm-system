@@ -1,6 +1,7 @@
 ﻿using Law.BL.Services;
 using Law.BL.Services.IServices;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -15,12 +16,14 @@ namespace LawApp.Controllers
             _clientService = clientService;
             _paymentService = paymentService;
         }
+        [Permission("CanAccessPayments")]
         public async Task<IActionResult> Index()
         {
             ViewBag.listClients = new SelectList((await _clientService.GetAll()).ToList(), "Id", "ClientName");
 
             return View();
         }
+        [ApiPermission("CanAccessPayments")]
         public async Task<IActionResult> GetNextPaymentCode()
         {
             try
@@ -37,6 +40,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessPayments")]
         public async Task<IActionResult> AddPayment([FromForm] UpdatePayment model)
         {
 
@@ -65,6 +69,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessPayments")]
         public async Task<IActionResult> EditPayment([FromForm] UpdatePayment model)
         {
             ModelState.Remove("PaymentImage");
@@ -90,6 +95,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessPayments")]
         public async Task<IActionResult> DeletePayment(int id)
         {
             try
@@ -103,6 +109,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpGet("GetMinPayment")]
+        [ApiPermission("CanAccessPayments")]
         public async Task<IActionResult> GetMinPayment()
         {
             var Payment = await _paymentService.GetMinPayment();
@@ -112,6 +119,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxPayment")]
+        [ApiPermission("CanAccessPayments")]
         public async Task<IActionResult> GetMaxPayment()
         {
             var Payment = await _paymentService.GetMaxPayment();
@@ -121,6 +129,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextPayment/{id}")]
+        [ApiPermission("CanAccessPayments")]
         public async Task<IActionResult> GetNextPayment(int id)
         {
             if (id == 0)
@@ -134,6 +143,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetPreviousPayment/{id}")]
+        [ApiPermission("CanAccessPayments")]
         public async Task<IActionResult> GetPreviousPayment(int id)
         {
             if (id == 0)
@@ -145,6 +155,7 @@ namespace LawApp.Controllers
                 return NotFound(new { Message = "No previous record found." });
             return Ok(Payment);
         }
+        [Permission("CanAccessPayments")]
         public async Task<IActionResult> PrintPayment(int id)
         {
             var model = await _paymentService.GetpaymentForPrint(id); // اجلب البيانات

@@ -1,6 +1,7 @@
 ﻿using System;
 using Law.BL.Services.IServices;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LawApp.Controllers
@@ -12,10 +13,12 @@ namespace LawApp.Controllers
         {
             _service = service;
         }
+        [Permission("CanAccessClient")]
         public IActionResult Index()
         {
             return View();
         }
+        [ApiPermission("CanAccessClient")]
         public async Task<IActionResult> GetNextClientCode()
         {
             try
@@ -32,6 +35,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessClient")]
         public async Task<IActionResult> AddClient([FromForm] UpdateClient model)
         {
             ModelState.Remove("OldImageBase64");
@@ -58,6 +62,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessClient")]
         public async Task<IActionResult> EditClient([FromForm] UpdateClient model)
         {
             ModelState.Remove("ClientImage");
@@ -83,6 +88,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
             [HttpPost]
+        [ApiPermission("CanAccessClient")]
         public async Task<IActionResult> DeleteClient(int id)
         {
             try
@@ -96,6 +102,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpGet("GetMinClient")]
+        [ApiPermission("CanAccessClient")]
         public async Task<IActionResult> GetMinClient()
         {
             var client = await _service.GetMinClient();
@@ -105,6 +112,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxClient")]
+        [ApiPermission("CanAccessClient")]
         public async Task<IActionResult> GetMaxClient()
         {
             var Client = await _service.GetMaxClient();
@@ -114,6 +122,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextClient/{id}")]
+        [ApiPermission("CanAccessClient")]
         public async Task<IActionResult> GetNextClient(int id)
         {
             if (id == 0)
@@ -127,6 +136,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetPreviousClient/{id}")]
+        [ApiPermission("CanAccessClient")]
         public async Task<IActionResult> GetPreviousClient(int id)
         {
             if (id == 0)

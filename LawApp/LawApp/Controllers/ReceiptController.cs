@@ -1,5 +1,6 @@
 ﻿using Law.BL.Services.IServices;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -14,11 +15,13 @@ namespace LawApp.Controllers
             _receiptService = receiptService;
             _clientService = clientService;
         }
+        [Permission("CanAccessReceipts")]
         public async Task<IActionResult> Index()
         {
             ViewBag.listClients=new SelectList((await _clientService.GetAll()).ToList(), "Id", "ClientName");
             return View();
         }
+        [ApiPermission("CanAccessReceipts")]
         public async Task<IActionResult> GetNextReceiptCode()
         {
             try
@@ -35,6 +38,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessReceipts")]
         public async Task<IActionResult> AddReceipt([FromForm] UpdateReceipt model)
         {
            
@@ -63,6 +67,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessReceipts")]
         public async Task<IActionResult> EditReceipt([FromForm] UpdateReceipt model)
         {
             ModelState.Remove("ReceiptImage");
@@ -88,6 +93,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessReceipts")]
         public async Task<IActionResult> DeleteReceipt(int id)
         {
             try
@@ -101,6 +107,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpGet("GetMinReceipt")]
+        [ApiPermission("CanAccessReceipts")]
         public async Task<IActionResult> GetMinReceipt()
         {
             var Receipt = await _receiptService.GetMinReceipt();
@@ -110,6 +117,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxReceipt")]
+        [ApiPermission("CanAccessReceipts")]
         public async Task<IActionResult> GetMaxReceipt()
         {
             var Receipt = await _receiptService.GetMaxReceipt();
@@ -119,6 +127,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextReceipt/{id}")]
+        [ApiPermission("CanAccessReceipts")]
         public async Task<IActionResult> GetNextReceipt(int id)
         {
             if (id == 0)
@@ -132,6 +141,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetPreviousReceipt/{id}")]
+        [ApiPermission("CanAccessReceipts")]
         public async Task<IActionResult> GetPreviousReceipt(int id)
         {
             if (id == 0)
@@ -143,6 +153,7 @@ namespace LawApp.Controllers
                 return NotFound(new { Message = "No previous record found." });
             return Ok(Receipt);
         }
+        [Permission("CanAccessReceipts")]
         public async Task<IActionResult> PrintReceipt(int id)
         {
             var model =await _receiptService.GetReceiptForPrint(id); // اجلب البيانات

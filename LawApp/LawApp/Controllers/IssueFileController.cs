@@ -1,5 +1,6 @@
 ﻿using Law.BL.Services.IServices;
 using Law.CORE.ViewModels;
+using LawApp.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -25,6 +26,7 @@ namespace LawApp.Controllers
             _partyService = partyService;   
             _issueFileService = issueFileService;
         }
+        [Permission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> Index()
         {
           
@@ -35,6 +37,7 @@ namespace LawApp.Controllers
             ViewBag.listParties = new SelectList((await _partyService.GetAll()).ToList(), "Id", "PartyName");
             return View();
         }
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetNextIssueFileCode()
         {
             try
@@ -51,6 +54,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> AddIssueFile([FromForm] UpdateIssueFile model)
         {
            
@@ -77,6 +81,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> EditIssueFile([FromForm] UpdateIssueFile model)
         {
             ModelState.Remove("DateNow");
@@ -99,6 +104,7 @@ namespace LawApp.Controllers
             return Ok(new { success, message = resultMessage });
         }
         [HttpPost]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> DeleteIssueFile(int id)
         {
             try
@@ -112,6 +118,7 @@ namespace LawApp.Controllers
             }
         }
         [HttpGet("GetMinIssueFile")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetMinIssueFile()
         {
             var IssueFile = await _issueFileService.GetMinIssueFile();
@@ -121,6 +128,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetMaxIssueFile")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetMaxIssueFile()
         {
             var IssueFile = await _issueFileService.GetMaxIssueFile();
@@ -130,6 +138,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetNextIssueFile/{id}")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetNextIssueFile(int id)
         {
             if (id == 0)
@@ -143,6 +152,7 @@ namespace LawApp.Controllers
         }
 
         [HttpGet("GetPreviousIssueFile/{id}")]
+        [ApiPermission("CanAccessTypesOfIssue")]
         public async Task<IActionResult> GetPreviousIssueFile(int id)
         {
             if (id == 0)

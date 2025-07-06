@@ -1,0 +1,68 @@
+﻿@using Law.CORE.ViewModels
+@model List<OfferAdminViewModel>
+@{
+    ViewData["Title"] = "جميع العروض";
+}
+
+<h4 class="mb-4">📑 جميع عروض المحامين</h4>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<table class="table table-bordered table-sm table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>اسم المحامي</th>
+            <th>رقم الهاتف</th>
+            <th>رقم المكتب</th>
+            <th>الحل المقترح</th>
+            <th>الأتعاب</th>
+            <th>تاريخ التقديم</th>
+            <th>القضية</th>
+            <th>تم الترسية؟</th>
+            <th>إجراء</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var offer in Model)
+        {
+            <tr>
+                <td>@offer.LawyerName</td>
+                <td>@offer.PhoneNumber</td>
+                <td>@offer.OfficeNumber</td>
+                <td>@offer.ProposedSolution</td>
+                <td>@offer.ProposedFees</td>
+                <td>@offer.SubmittedAt.ToString("yyyy-MM-dd")</td>
+                <td>@offer.CaseTitle</td>
+                <td>
+                    @if (offer.IsAwarded)
+                    {
+                        <span class="badge bg-success">✅ مرسو</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">لم يتم</span>
+                    }
+                </td>
+                <td>
+                    @if (!offer.IsAwarded)
+                    {
+                        <form asp-action="AwardOffer" method="post">
+                            <input type="hidden" name="offerId" value="@offer.OfferId" />
+                            <button class="btn btn-sm btn-primary" type="submit"
+                                    onclick="return confirm('هل تريد ترسية هذا العرض؟');">
+                                ترسية
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">تم الترسية</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
