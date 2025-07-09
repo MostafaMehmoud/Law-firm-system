@@ -54,6 +54,7 @@ namespace Law.BL.Services
 
             return opinions.Select(o => new OpinionDisplayViewModel
             {
+                Id = o.Id,
                 CaseTitle = o.Case.Title,
                 LawyerName = o.User.UserName,
                 Comment = o.Comment,

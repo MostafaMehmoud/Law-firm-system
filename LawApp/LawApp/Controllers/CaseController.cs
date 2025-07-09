@@ -24,21 +24,34 @@ namespace LawApp.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _authService.GetUserByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             var model = await _caseService.GetCasesWithOfferStatusAsync(user.Id);
             return View(model);
         }
         public async Task<IActionResult> Details(int id)
         {
+            var user = await _authService.GetUserByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var caseDetails = await _caseService.GetCaseByIdAsync(id);
             if (caseDetails == null)
                 return NotFound();
 
             var opinions = await _opinionService.GetOpinionsByCaseIdAsync(id);
 
-            var viewModel = new CaseDetailsViewModel
+            var viewModel = new CaseDetailViewModel
             {
-                Case = caseDetails,
-                Opinions = opinions
+              
+                Opinions = opinions.Select(o=>new OpinionViewModel
+                {
+                    Id=o.Id,
+                    LawyerName=o.LawyerName,
+                    Comment=o.Comment,
+                    PostedAt=o.PostedAt,
+                    UserId= user.Id,
+
+                }).ToList()
             };
 
             return View(viewModel);
@@ -63,6 +76,10 @@ namespace LawApp.Controllers
         public async Task<IActionResult> AllCases()
         {
             var user = await _authService.GetUserByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if(user == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             var model = await _caseService.GetCasesWithOfferStatusForUserAsync(user.Id);
             return View(model);
         }

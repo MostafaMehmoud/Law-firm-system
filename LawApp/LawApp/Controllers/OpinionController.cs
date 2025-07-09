@@ -36,7 +36,10 @@ namespace LawApp.Controllers
                 return View(model);
 
             var userId  = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             // ❌ تحقق من تكرار الرأي
             bool hasOpinion = await _opinionService.HasUserSubmittedOpinionAsync(userId, model.CaseId);
             if (hasOpinion)
@@ -48,6 +51,7 @@ namespace LawApp.Controllers
             // ✅ إنشاء الرأي
             var opinion = new Opinion
             {
+                 // سيتم تعيينه تلقائيًا من قاعدة البيانات
                 CaseId = model.CaseId,
                 UserId = userId,
                 Comment = model.Comment,
@@ -64,6 +68,10 @@ namespace LawApp.Controllers
         public async Task<IActionResult> MyOpinions()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             var model = await _opinionService.GetUserOpinionsAsync(userId);
             return View(model);
         }
@@ -75,6 +83,10 @@ namespace LawApp.Controllers
                 return NotFound();
 
             var userId  = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             var opinion = await _unitOfWork.OpinionRepository.GetByIdAsync(id);
 
             if (opinion.UserId != userId)
@@ -89,6 +101,10 @@ namespace LawApp.Controllers
         public async Task<IActionResult> EditOpinion(OpinionEditViewModel model)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             var updated = await _opinionService.UpdateOpinionAsync(model, userId);
 
             if (!updated)
@@ -112,7 +128,11 @@ namespace LawApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteOpinion(int id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             var opinion = await _unitOfWork.OpinionRepository.GetByIdAsync(id);
 
             if (opinion == null || opinion.UserId != userId)

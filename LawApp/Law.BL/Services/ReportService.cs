@@ -270,6 +270,7 @@ namespace Law.BL.Services
         {
             var receipts = (await _unitOfWork.receipts.GetAll()).AsQueryable();
             var payments = (await _unitOfWork.payments.GetAll()).AsQueryable();
+            var issues = (await _unitOfWork.issuesFile.GetAll()).AsQueryable();
             var clients = await _unitOfWork.clients.GetAll();
 
             // فلترة حسب التاريخ (نؤجل فلترة حسب Client الآن)
@@ -297,28 +298,41 @@ namespace Law.BL.Services
             {
                 var clientReceipts = receipts.Where(r => r.ClientId == client.Id).ToList();
                 var clientPayments = payments.Where(p => p.ClientId == client.Id).ToList();
+                var clientissuess = issues.Where(p => p.ClientId == client.Id).ToList();
 
                 var items = new List<ReceiptIssueDto>();
 
                 // رصيد افتتاحي
                 decimal openingBalance = 0;
-                if (filter.FromDate.HasValue)
-                {
-                    var receiptsBefore = clientReceipts.Where(r => r.DateReceipt < DateOnly.FromDateTime(filter.FromDate.Value)).ToList();
-                    var paymentsBefore = clientPayments.Where(p => p.DatePayment < DateOnly.FromDateTime(filter.FromDate.Value)).ToList();
+                //if (filter.FromDate.HasValue)
+                //{
+                //    var receiptsBefore = clientReceipts.Where(r => r.DateReceipt < DateOnly.FromDateTime(filter.FromDate.Value)).ToList();
+                //    var paymentsBefore = clientPayments.Where(p => p.DatePayment < DateOnly.FromDateTime(filter.FromDate.Value)).ToList();
 
-                    openingBalance = receiptsBefore.Sum(r => r.Amount) - paymentsBefore.Sum(p => p.Amount);
-                }
+                //    openingBalance = receiptsBefore.Sum(r => r.Amount) - paymentsBefore.Sum(p => p.Amount);
+                //}
 
                 // بيانات داخل الفترة فقط
                 var receiptsInRange = filter.FromDate.HasValue
                     ? clientReceipts.Where(r => r.DateReceipt >= DateOnly.FromDateTime(filter.FromDate.Value)).ToList()
                     : clientReceipts.ToList();
 
-                var paymentsInRange = filter.FromDate.HasValue
-                    ? clientPayments.Where(p => p.DatePayment >= DateOnly.FromDateTime(filter.FromDate.Value)).ToList()
-                    : clientPayments.ToList();
-
+                var issuessInRange = filter.FromDate.HasValue
+                    ? clientissuess.Where(p => p.DateNow >= DateOnly.FromDateTime(filter.FromDate.Value)).ToList()
+                    : clientissuess.ToList();
+                foreach (var p in issuessInRange)
+                {
+                    items.Add(new ReceiptIssueDto
+                    {
+                        InvoiceOrBond = "مصاريف القضية",
+                        Date = p.DateNow,
+                        ReceiptNumber = p.Code,
+                        IssueTitle = p.IssueName,
+                        DebtorAmount = p.IssueValueFees,
+                        CreditorAmount = 0,
+                        Description = p.IssueDescription
+                    });
+                }
                 foreach (var r in receiptsInRange)
                 {
                     items.Add(new ReceiptIssueDto
@@ -327,55 +341,26 @@ namespace Law.BL.Services
                         Date = r.DateReceipt,
                         ReceiptNumber = r.Code,
                         IssueTitle = r.Purpose,
-                        DebtorAmount = 0,
+                        DebtorAmount =0 ,
                         CreditorAmount = r.Amount,
                         Description = r.ProjectName
                     });
                 }
 
-                foreach (var p in paymentsInRange)
-                {
-                    items.Add(new ReceiptIssueDto
-                    {
-                        InvoiceOrBond = "سند صرف",
-                        Date = p.DatePayment,
-                        ReceiptNumber = p.Code,
-                        IssueTitle = p.Purpose,
-                        DebtorAmount = p.Amount,
-                        CreditorAmount = 0,
-                        Description = p.ProjectName
-                    });
-                }
+
 
                 // ترتيب وحساب الرصيد
-                var ordered = items.OrderBy(i => i.Date).ThenBy(i => i.InvoiceOrBond).ToList();
-                decimal runningBalance = openingBalance;
+                var ordered = items.ToList();
+                decimal runningBalance = 0;
+                int index = 1;
 
-                if (filter.FromDate.HasValue)
-                {
-                    ordered.Insert(0, new ReceiptIssueDto
-                    {
-                        Index = 0,
-                        InvoiceOrBond = "رصيد افتتاحي",
-                        Date = DateOnly.FromDateTime(filter.FromDate.Value.AddDays(-1)),
-                        ReceiptNumber = 0,
-                        IssueTitle = "",
-                        DebtorAmount = 0,
-                        CreditorAmount = 0,
-                        Balance = openingBalance,
-                        Description = ""
-                    });
-                }
-
-                int i = 1;
                 foreach (var item in ordered)
                 {
-                    if (item.InvoiceOrBond != "رصيد افتتاحي")
-                        runningBalance += item.CreditorAmount - item.DebtorAmount;
-
+                    runningBalance += item.CreditorAmount - item.DebtorAmount;
                     item.Balance = runningBalance;
-                    item.Index = i++;
+                    item.Index = index++;
                 }
+
 
                 // إضافة نتيجة العميل فقط لو لديه بيانات
                 if (ordered.Count > 0)
